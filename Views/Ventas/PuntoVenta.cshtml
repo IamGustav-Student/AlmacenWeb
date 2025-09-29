@@ -1,0 +1,122 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Punto de Venta";
+}
+
+<h1>Punto de Venta</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <h3>Escanear Producto</h3>
+        <!-- Contenedor para el video del escáner -->
+        <!-- Contenedor para el video del escáner con estilos modificados -->
+        <div id="scanner-container" style="width: 400px; height: 200px; border: 1px solid #ccc; overflow: hidden;"></div>
+
+        <label for="barcodeInput" class="mt-3">O escribir código manualmente:</label>
+        <input type="text" id="barcodeInput" class="form-control" />
+
+        <button id="finalizarVenta" class="btn btn-success mt-3">Finalizar Venta</button>
+    </div>
+    <div class="col-md-6">
+        <h3>Carrito de Compras</h3>
+        <ul id="carritoList" class="list-group">
+            <!-- Los productos se agregarán aquí dinámicamente -->
+        </ul>
+        <h4 class="mt-3">Total: <span id="totalVenta">0.00</span></h4>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
+    <script>
+        let carrito = []; // Array para almacenar los productos en el carrito
+
+        $(document).ready(function () {
+            // Inicializar QuaggaJS
+            Quagga.init({
+                inputStream: {
+                    name: "Live",
+                    type: "LiveStream",
+                    target: document.querySelector('#scanner-container'), // El contenedor para el video
+                    constraints: {
+                        facingMode: "environment" // Usa la cámara trasera en dispositivos móviles
+                    }
+                },
+                decoder: {
+                    readers: ["ean_reader", "code_128_reader", "upc_reader"] // Tipos de códigos a leer
+                }
+            }, function (err) {
+                if (err) {
+                    console.log(err);
+                    return
+                }
+                console.log("Inicialización completa. Empezando a escanear.");
+                Quagga.start();
+            });
+
+            // Lógica cuando se detecta un código de barras
+            Quagga.onDetected(function(result) {
+                const codigoBarra = result.codeResult.code;
+                alert("Código detectado: " + codigoBarra);
+                buscarProducto(codigoBarra);
+            });
+
+            // Lógica para manejar la entrada manual o escáner USB
+            $("#barcodeInput").on("keypress", function (e) {
+                if (e.which == 13) {
+                    e.preventDefault();
+                    let codigoBarra = $(this).val();
+                    buscarProducto(codigoBarra);
+                    $(this).val("");
+                }
+            });
+
+            // Función para buscar el producto vía AJAX
+            function buscarProducto(codigoBarra) {
+                $.ajax({
+                    url: "/Ventas/BuscarProducto",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(codigoBarra),
+                    success: function (producto) {
+                        if (producto) {
+                            carrito.push(producto);
+                            actualizarCarrito();
+                        } else {
+                            alert("Producto no encontrado.");
+                        }
+                    },
+                    error: function () {
+                        alert("Producto no encontrado.");
+                    }
+                });
+            }
+
+            function actualizarCarrito() {
+                $("#carritoList").empty();
+                let total = 0;
+                carrito.forEach(p => {
+                    $("#carritoList").append(`<li class="list-group-item">${p.nombre} - $${p.precio}</li>`);
+                    total += p.precio;
+                });
+                $("#totalVenta").text(total.toFixed(2));
+            }
+
+            // Lógica para finalizar la venta
+            $("#finalizarVenta").on("click", function () {
+                if (carrito.length > 0) {
+                    // Implementaremos esto en el siguiente paso
+                    alert("Se enviará a la base de datos.");
+                    carrito = [];
+                    actualizarCarrito();
+                } else {
+                    alert("El carrito está vacío.");
+                }
+            });
+        });
+    </script>
+}
+
+

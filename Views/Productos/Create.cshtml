@@ -1,0 +1,121 @@
+﻿@model AlmacenWeb.Models.Producto
+
+@{
+    ViewData["Title"] = "Crear Nuevo Producto";
+}
+
+<h1>Crear Nuevo Producto</h1>
+
+<h4>Producto</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <div class="form-group">
+                <label asp-for="PrNombre" class="control-label"></label>
+                <input asp-for="PrNombre" class="form-control" />
+                <span asp-validation-for="PrNombre" class="text-danger"></span>
+            </div>
+            
+            @* <div class="form-group">
+                <label asp-for="Descripcion" class="control-label"></label>
+                <textarea asp-for="Descripcion" class="form-control"></textarea>
+                <span asp-validation-for="Descripcion" class="text-danger"></span>
+            </div> *@
+            
+            <div class="form-group">
+                <label asp-for="CodigoBarra" class="control-label"></label>
+                <div class="input-group">
+                    <input asp-for="CodigoBarra" class="form-control" id="barcodeManualInput" />
+                    <button type="button" class="btn btn-secondary" id="startScannerBtn">Escanear</button>
+                </div>
+                <span asp-validation-for="CodigoBarra" class="text-danger"></span>
+            </div>
+
+            <!-- Contenedor para el escáner (oculto por defecto) -->
+            <div id="scanner-container" style="display:none; width: 400px; height: 200px; border: 1px solid #ccc; overflow: hidden; margin-top: 10px;"></div>
+
+            <div class="form-group">
+                <label asp-for="Precio" class="control-label"></label>
+                <input asp-for="Precio" class="form-control" />
+                <span asp-validation-for="Precio" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="CantidadDisponible" class="control-label"></label>
+                <input asp-for="CantidadDisponible" class="form-control" />
+                <span asp-validation-for="CantidadDisponible" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group mt-3">
+                <input type="submit" value="Crear" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const scannerContainer = document.querySelector('#scanner-container');
+            const barcodeInput = document.querySelector('#barcodeManualInput');
+            const startScannerBtn = document.querySelector('#startScannerBtn');
+            let isScanning = false;
+
+            startScannerBtn.addEventListener('click', function() {
+                if (isScanning) {
+                    Quagga.stop();
+                    scannerContainer.style.display = 'none';
+                    startScannerBtn.textContent = 'Escanear';
+                    isScanning = false;
+                } else {
+                    scannerContainer.style.display = 'block';
+                    startScannerBtn.textContent = 'Detener Escáner';
+                    isScanning = true;
+
+                    Quagga.init({
+                        inputStream: {
+                            name: "Live",
+                            type: "LiveStream",
+                            target: scannerContainer,
+                            constraints: {
+                                facingMode: "environment"
+                            }
+                        },
+                        decoder: {
+                            readers: ["ean_reader", "code_128_reader", "upc_reader"]
+                        }
+                    }, function(err) {
+                        if (err) {
+                            console.log(err);
+                            alert("Error al iniciar el escáner: " + err.message);
+                            return
+                        }
+                        Quagga.start();
+                    });
+
+                    Quagga.onDetected(function(result) {
+                        const codigoBarra = result.codeResult.code;
+                        barcodeInput.value = codigoBarra; // Asigna el valor al campo de texto
+                        
+                        Quagga.stop(); // Detiene el escáner automáticamente
+                        scannerContainer.style.display = 'none';
+                        startScannerBtn.textContent = 'Escanear';
+                        isScanning = false;
+                    });
+                }
+            });
+
+            // Si el campo de código de barras recibe un 'Enter' (por escáner USB), no inicia la cámara.
+            barcodeInput.addEventListener("keypress", function(e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+}
