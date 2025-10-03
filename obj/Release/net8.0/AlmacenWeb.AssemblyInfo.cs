@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AlmacenWeb")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b100b66ac09823001beaa0838f7eddbcd0137e2c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1e7f588ebb3e3c36f339d9b4637471aca4ea5d79")]
 [assembly: System.Reflection.AssemblyProductAttribute("AlmacenWeb")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AlmacenWeb")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

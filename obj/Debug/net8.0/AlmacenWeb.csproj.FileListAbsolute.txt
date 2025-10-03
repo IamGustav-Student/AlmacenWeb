@@ -571,7 +571,6 @@ C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\bin\Debug\net8.0\runtim
 C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\bin\Debug\net8.0\runtimes\browser\lib\net8.0\System.Text.Encodings.Web.dll
 C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\bin\Debug\net8.0\runtimes\win\lib\net7.0\System.Windows.Extensions.dll
 C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\obj\Debug\net8.0\AlmacenWeb.csproj.AssemblyReference.cache
-C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\obj\Debug\net8.0\rpswa.dswa.cache.json
 C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\obj\Debug\net8.0\AlmacenWeb.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\obj\Debug\net8.0\AlmacenWeb.AssemblyInfoInputs.cache
 C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\obj\Debug\net8.0\AlmacenWeb.AssemblyInfo.cs
@@ -580,14 +579,10 @@ C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\obj\Debug\net8.0\Almace
 C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\obj\Debug\net8.0\AlmacenWeb.RazorAssemblyInfo.cache
 C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\obj\Debug\net8.0\AlmacenWeb.RazorAssemblyInfo.cs
 C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\obj\Debug\net8.0\AlmacenWeb.sourcelink.json
-C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\obj\Debug\net8.0\rjimswa.dswa.cache.json
-C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
-C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
 C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\obj\Debug\net8.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
 C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\obj\Debug\net8.0\scopedcss\bundle\AlmacenWeb.styles.css
 C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\obj\Debug\net8.0\scopedcss\projectbundle\AlmacenWeb.bundle.scp.css
 C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\obj\Debug\net8.0\staticwebassets.build.json
-C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\obj\Debug\net8.0\staticwebassets.build.json.cache
 C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\obj\Debug\net8.0\staticwebassets.build.endpoints.json
 C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
@@ -597,3 +592,9 @@ C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\obj\Debug\net8.0\refint
 C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\obj\Debug\net8.0\AlmacenWeb.pdb
 C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\obj\Debug\net8.0\AlmacenWeb.genruntimeconfig.cache
 C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\obj\Debug\net8.0\ref\AlmacenWeb.dll
+C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\obj\Debug\net8.0\staticwebassets\msbuild.AlmacenWeb.Microsoft.AspNetCore.StaticWebAssets.props
+C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\obj\Debug\net8.0\staticwebassets\msbuild.AlmacenWeb.Microsoft.AspNetCore.StaticWebAssetEndpoints.props
+C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\obj\Debug\net8.0\staticwebassets\msbuild.build.AlmacenWeb.props
+C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.AlmacenWeb.props
+C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.AlmacenWeb.props
+C:\Users\iamgu\source\repos\IamGustav-Student\AlmacenWeb\obj\Debug\net8.0\staticwebassets.pack.json

@@ -77,6 +77,9 @@ namespace AlmacenWeb.Migrations
                     b.Property<int>("ProductoId")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("Total")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<int>("VentaId")
                         .HasColumnType("int");
 
@@ -118,6 +121,102 @@ namespace AlmacenWeb.Migrations
                     b.ToTable("Productos");
                 });
 
+            modelBuilder.Entity("AlmacenWeb.Models.Proveedor", b =>
+                {
+                    b.Property<int>("ProveedorId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProveedorId"));
+
+                    b.Property<string>("ProveedorName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("ProveedorId");
+
+                    b.ToTable("Proveedor");
+                });
+
+            modelBuilder.Entity("AlmacenWeb.Models.Rol", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("RoDescripcion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RoNombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+                });
+
+            modelBuilder.Entity("AlmacenWeb.Models.Usuario", b =>
+                {
+                    b.Property<int>("UsId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UsId"));
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
+
+                    b.Property<bool>("UsActivo")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UsApellido")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UsDireccion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UsEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UsFechaRegistro")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UsNombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UsPassword")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UsTelefono")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UsToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("date_created")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("UsId");
+
+                    b.ToTable("Usuarios");
+
+                    b.HasDiscriminator().HasValue("Usuario");
+
+                    b.UseTphMappingStrategy();
+                });
+
             modelBuilder.Entity("AlmacenWeb.Models.Venta", b =>
                 {
                     b.Property<int>("Id")
@@ -140,6 +239,25 @@ namespace AlmacenWeb.Migrations
                     b.HasIndex("ClienteId");
 
                     b.ToTable("Ventas");
+                });
+
+            modelBuilder.Entity("AlmacenWeb.Models.Empleado", b =>
+                {
+                    b.HasBaseType("AlmacenWeb.Models.Usuario");
+
+                    b.Property<decimal>("EmpComision")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("EmpComisiona")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("EmpNLegajo")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("EmpSueldo")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasDiscriminator().HasValue("Empleado");
                 });
 
             modelBuilder.Entity("AlmacenWeb.Models.DetalleVenta", b =>
