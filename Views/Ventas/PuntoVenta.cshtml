@@ -9,114 +9,167 @@
 
 <div class="row">
     <div class="col-md-6">
-        <h3>Escanear Producto</h3>
-        <!-- Contenedor para el video del escáner -->
-        <!-- Contenedor para el video del escáner con estilos modificados -->
-        <div id="scanner-container" style="width: 400px; height: 200px; border: 1px solid #ccc; overflow: hidden;"></div>
-
-        <label for="barcodeInput" class="mt-3">O escribir código manualmente:</label>
-        <input type="text" id="barcodeInput" class="form-control" />
-
-        <button id="finalizarVenta" class="btn btn-success mt-3">Finalizar Venta</button>
+    <h3>Escanear o Ingresar Producto</h3>
+    <div class="input-group">
+        <input type="text" id="barcodeInput" class="form-control" autofocus />
+        <button class="btn btn-primary" type="button" id="agregarManualBtn">Agregar</button>
+    </div>
+    <p class="text-muted">Escanee el producto o ingrese el código y presione Agregar.</p>
+    </div>
+    <div class="col-md-6  ">
+        <h3>Buscar por Nombre</h3>
+        <div class="input-group">
+            <input type="text" id="searchNameInput" class="form-control" placeholder="Nombre del producto..." />
+            <button class="btn btn-secondary" type="button" id="searchNameBtn">Buscar</button>
+        </div>
+        <ul id="searchResultsList" class="list-group mt-2">
+            <!-- Los resultados de la búsqueda se mostrarán aquí -->
+        </ul>
     </div>
     <div class="col-md-6">
-        <h3>Carrito de Compras</h3>
-        <ul id="carritoList" class="list-group">
-            <!-- Los productos se agregarán aquí dinámicamente -->
-        </ul>
-        <h4 class="mt-3">Total: <span id="totalVenta">0.00</span></h4>
+    <h3>Carrito de Compras</h3>
+    <ul id="carritoList" class="list-group">
+        <!-- Los productos se agregarán aquí dinámicamente -->
+    </ul>
+    <h4 class="mt-3">Total: <span id="totalVenta">0.00</span></h4>
+    <button id="finalizarVenta" class="btn btn-success">Finalizar Venta</button>
     </div>
 </div>
 
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
     <script>
-        let carrito = []; // Array para almacenar los productos en el carrito
+        let carrito = [];
 
         $(document).ready(function () {
-            // Inicializar QuaggaJS
-            Quagga.init({
-                inputStream: {
-                    name: "Live",
-                    type: "LiveStream",
-                    target: document.querySelector('#scanner-container'), // El contenedor para el video
-                    constraints: {
-                        facingMode: "environment" // Usa la cámara trasera en dispositivos móviles
-                    }
-                },
-                decoder: {
-                    readers: ["ean_reader", "code_128_reader", "upc_reader"] // Tipos de códigos a leer
-                }
-            }, function (err) {
-                if (err) {
-                    console.log(err);
-                    return
-                }
-                console.log("Inicialización completa. Empezando a escanear.");
-                Quagga.start();
-            });
-
-            // Lógica cuando se detecta un código de barras
-            Quagga.onDetected(function(result) {
-                const codigoBarra = result.codeResult.code;
-                alert("Código detectado: " + codigoBarra);
-                buscarProducto(codigoBarra);
-            });
-
-            // Lógica para manejar la entrada manual o escáner USB
+            // Lógica para manejar el escaneo de código de barras (escáner externo o manual)
             $("#barcodeInput").on("keypress", function (e) {
-                if (e.which == 13) {
+                if (e.which == 13) { // Si se presiona Enter
                     e.preventDefault();
                     let codigoBarra = $(this).val();
                     buscarProducto(codigoBarra);
-                    $(this).val("");
+                    $(this).val(""); // Limpia el campo después de escanear
                 }
             });
+            // Lógica para manejar el clic en el botón "Agregar"
+        $("#agregarManualBtn").on("click", function () {
+            let codigoBarra = $("#barcodeInput").val();
+            if (codigoBarra) {
+                buscarProducto(codigoBarra);
+                $("#barcodeInput").val(""); // Limpia el campo después de agregar
+            }
+        });
 
-            // Función para buscar el producto vía AJAX
-            function buscarProducto(codigoBarra) {
+
+            // ... (el resto del script para buscarProducto, actualizarCarrito y finalizarVenta permanece igual) ...
+        });
+
+
+        // Lógica para el botón de búsqueda por nombre
+        $("#searchNameBtn").on("click", function () {
+            let nombre = $("#searchNameInput").val();
+            if (nombre) {
+                buscarProductoPorNombre(nombre);
+            }
+        });
+
+        // Lógica para buscar el producto por nombre (AJAX)
+        function buscarProductoPorNombre(nombre) {
+            $.ajax({
+                url: "/Ventas/BuscarProductoPorNombre", // Nueva acción del controlador
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(nombre),
+                success: function (productos) {
+                    mostrarResultadosBusqueda(productos);
+                },
+                error: function () {
+                    alert("Error en la búsqueda.");
+                }
+            });
+        }
+
+        function mostrarResultadosBusqueda(productos) {
+            $("#searchResultsList").empty(); // Limpiar resultados anteriores
+            if (productos && productos.length > 0) {
+                productos.forEach(p => {
+                    $("#searchResultsList").append(
+                        `<li class="list-group-item">
+                            ${p.PrNombre} - $${p.precio}
+                            <button class="btn btn-sm btn-primary float-end" onclick="agregarDesdeBusqueda(${p.id})">Agregar</button>
+                        </li>`
+                    );
+                });
+            } else {
+                $("#searchResultsList").append(`<li class="list-group-item text-muted">No se encontraron productos.</li>`);
+            }
+        }
+
+        function agregarDesdeBusqueda(PrId) {
+            // Lógica para encontrar el producto y agregarlo al carrito
+            // Esto requerirá una nueva acción en el controlador para buscar por ID
+        }
+
+        // Función para buscar el producto vía AJAX
+         function buscarProducto(codigoBarra) {
+             $.ajax({
+                 url: "/Ventas/BuscarProducto",
+                 type: "POST",
+                 contentType: "application/json",
+                 data: JSON.stringify(codigoBarra),
+                 success: function (producto) {
+                     if (producto) {
+                         carrito.push(producto);
+                         actualizarCarrito();
+                     } else {
+                         alert("Producto no encontrado.");
+                     }
+                 },
+                 error: function () {
+                     alert("Producto no encontrado.");
+                 }
+             });
+         }
+
+         function actualizarCarrito() {
+             $("#carritoList").empty();
+             let total = 0;
+             carrito.forEach(p => {
+                 $("#carritoList").append(`<li class="list-group-item">${p.nombre} - $${p.precio}</li>`);
+                 total += p.precio;
+             });
+             $("#totalVenta").text(total.toFixed(2));
+         }
+
+        // Lógica para finalizar la venta
+        $("#finalizarVenta").on("click", function () {
+            if (carrito.length > 0) {
+                // Deshabilitar el botón para evitar clics múltiples
+                $(this).prop('disabled', true);
+
+                // Petición AJAX para guardar la venta en la base de datos
                 $.ajax({
-                    url: "/Ventas/BuscarProducto",
+                    url: "/Ventas/FinalizarVenta",
                     type: "POST",
                     contentType: "application/json",
-                    data: JSON.stringify(codigoBarra),
-                    success: function (producto) {
-                        if (producto) {
-                            carrito.push(producto);
-                            actualizarCarrito();
-                        } else {
-                            alert("Producto no encontrado.");
-                        }
+                    data: JSON.stringify(carrito),
+                    success: function (response) {
+                        alert("Venta finalizada con éxito: " + response);
+                        carrito = [];
+                        actualizarCarrito();
+                        $("#finalizarVenta").prop('disabled', false);
                     },
-                    error: function () {
-                        alert("Producto no encontrado.");
+                    error: function (xhr, status, error) {
+                        alert("Error al finalizar la venta: " + xhr.responseText);
+                        $("#finalizarVenta").prop('disabled', false);
                     }
                 });
+            } else {
+                alert("El carrito está vacío.");
             }
-
-            function actualizarCarrito() {
-                $("#carritoList").empty();
-                let total = 0;
-                carrito.forEach(p => {
-                    $("#carritoList").append(`<li class="list-group-item">${p.nombre} - $${p.precio}</li>`);
-                    total += p.precio;
-                });
-                $("#totalVenta").text(total.toFixed(2));
-            }
-
-            // Lógica para finalizar la venta
-            $("#finalizarVenta").on("click", function () {
-                if (carrito.length > 0) {
-                    // Implementaremos esto en el siguiente paso
-                    alert("Se enviará a la base de datos.");
-                    carrito = [];
-                    actualizarCarrito();
-                } else {
-                    alert("El carrito está vacío.");
-                }
-            });
         });
     </script>
 }
+
+
 
 

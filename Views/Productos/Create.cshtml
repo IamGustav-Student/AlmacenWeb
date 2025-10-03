@@ -12,109 +12,113 @@
     <div class="col-md-6">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            
+
             <div class="form-group">
                 <label asp-for="PrNombre" class="control-label"></label>
                 <input asp-for="PrNombre" class="form-control" />
                 <span asp-validation-for="PrNombre" class="text-danger"></span>
             </div>
-            
+
             @* <div class="form-group">
                 <label asp-for="Descripcion" class="control-label"></label>
                 <textarea asp-for="Descripcion" class="form-control"></textarea>
                 <span asp-validation-for="Descripcion" class="text-danger"></span>
             </div> *@
-            
+
             <div class="form-group">
                 <label asp-for="CodigoBarra" class="control-label"></label>
-                <div class="input-group">
-                    <input asp-for="CodigoBarra" class="form-control" id="barcodeManualInput" />
-                    <button type="button" class="btn btn-secondary" id="startScannerBtn">Escanear</button>
-                </div>
+                <input asp-for="CodigoBarra" class="form-control" id="barcodeInput" autofocus />
                 <span asp-validation-for="CodigoBarra" class="text-danger"></span>
             </div>
-
-            <!-- Contenedor para el escáner (oculto por defecto) -->
-            <div id="scanner-container" style="display:none; width: 400px; height: 200px; border: 1px solid #ccc; overflow: hidden; margin-top: 10px;"></div>
 
             <div class="form-group">
                 <label asp-for="Precio" class="control-label"></label>
                 <input asp-for="Precio" class="form-control" />
                 <span asp-validation-for="Precio" class="text-danger"></span>
             </div>
-            
+
             <div class="form-group">
                 <label asp-for="CantidadDisponible" class="control-label"></label>
                 <input asp-for="CantidadDisponible" class="form-control" />
                 <span asp-validation-for="CantidadDisponible" class="text-danger"></span>
             </div>
-            
+
             <div class="form-group mt-3">
                 <input type="submit" value="Crear" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
+<!-- Columna derecha: Cuadro de diálogo para productos cargados -->
+<div class="col-md-6">
+    <div class="product-list-container">
+        <h3>Productos Cargados Recientemente</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nombre de Producto</th>
+                    <th>Código de Barras</th>
+                </tr>
+            </thead>
+            <tbody id="lastProductsTable">
+                <!-- Los productos se agregarán aquí con JavaScript -->
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    <script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
     <script>
         $(document).ready(function () {
-            const scannerContainer = document.querySelector('#scanner-container');
-            const barcodeInput = document.querySelector('#barcodeManualInput');
-            const startScannerBtn = document.querySelector('#startScannerBtn');
-            let isScanning = false;
-
-            startScannerBtn.addEventListener('click', function() {
-                if (isScanning) {
-                    Quagga.stop();
-                    scannerContainer.style.display = 'none';
-                    startScannerBtn.textContent = 'Escanear';
-                    isScanning = false;
-                } else {
-                    scannerContainer.style.display = 'block';
-                    startScannerBtn.textContent = 'Detener Escáner';
-                    isScanning = true;
-
-                    Quagga.init({
-                        inputStream: {
-                            name: "Live",
-                            type: "LiveStream",
-                            target: scannerContainer,
-                            constraints: {
-                                facingMode: "environment"
-                            }
-                        },
-                        decoder: {
-                            readers: ["ean_reader", "code_128_reader", "upc_reader"]
-                        }
-                    }, function(err) {
-                        if (err) {
-                            console.log(err);
-                            alert("Error al iniciar el escáner: " + err.message);
-                            return
-                        }
-                        Quagga.start();
-                    });
-
-                    Quagga.onDetected(function(result) {
-                        const codigoBarra = result.codeResult.code;
-                        barcodeInput.value = codigoBarra; // Asigna el valor al campo de texto
-                        
-                        Quagga.stop(); // Detiene el escáner automáticamente
-                        scannerContainer.style.display = 'none';
-                        startScannerBtn.textContent = 'Escanear';
-                        isScanning = false;
-                    });
-                }
-            });
-
-            // Si el campo de código de barras recibe un 'Enter' (por escáner USB), no inicia la cámara.
-            barcodeInput.addEventListener("keypress", function(e) {
+            // Lógica para que el escáner USB funcione sin interferir
+            $("#barcodeInput").on("keypress", function (e) {
+                // Si el evento de tecla es 'Enter'
                 if (e.which === 13) {
+                    // Previene el envío del formulario al escanear
                     e.preventDefault();
+                    // Opcional: enfocar el siguiente campo para facilitar la entrada de datos
+                    // const currentInput = $(this);
+                    // const nextInput = currentInput.closest('.form-group').next('.form-group').find('input, textarea');
+                    // if (nextInput.length) {
+                    //     nextInput.focus();
+                    // }
                 }
+                // Lógica para manejar el envío del formulario con AJAX
+            $("#createProductForm").on("submit", function (e) {
+                e.preventDefault(); // Evita el envío tradicional del formulario
+
+                if (!$(this).valid()) {
+                    return;
+                }
+
+                const formData = $(this).serialize();
+
+                $.ajax({
+                    url: $(this).attr("action"),
+                    type: "POST",
+                    data: formData,
+                    success: function (response) {
+                        // Limpiar el formulario
+                        $("#createProductForm")[0].reset();
+                        $("#barcodeInput").focus();
+
+                        // Agregar el nuevo producto a la tabla
+                        const newProduct = {
+                            nombre: $("#Nombre").val(),
+                            codigoBarra: $("#barcodeInput").val()
+                        };
+                        const newRow = `<tr><td>${newProduct.nombre}</td><td>${newProduct.codigoBarra}</td></tr>`;
+                        $("#lastProductsTable").prepend(newRow); // Usamos prepend para que el último sea el primero
+
+                        alert("Producto creado exitosamente.");
+                    },
+                    error: function (xhr, status, error) {
+                        alert("Error al crear el producto: " + xhr.responseText);
+                    }
             });
         });
     </script>

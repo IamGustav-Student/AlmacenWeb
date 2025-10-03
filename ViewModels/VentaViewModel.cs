@@ -1,4 +1,6 @@
 ﻿using AlmacenWeb.Models;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
+using System.ComponentModel.DataAnnotations;
 
 namespace AlmacenWeb.ViewModels
 {
