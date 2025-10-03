@@ -18,5 +18,18 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    background: linear-gradient(to right, #e0eafc, #cfdef3);
+    margin-bottom: 60px;
 }
+/* Estilo para el contenedor de la lista de productos */
+/*.product-list-container {
+    background-color: darkgoldenrod;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    height: 100%;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+}*/

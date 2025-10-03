@@ -1,4 +1,5 @@
 using AlmacenWeb.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,5 +30,38 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// Sección para inicializar roles
+//using (var scope = app.Services.CreateScope())
+//{
+//    var roleManager = scope.ServiceProvider.GetRequiredService();
+//    var userManager = scope.ServiceProvider.GetRequiredService();
+
+//    string[] roles = new string[] { "Admin", "Dueño", "Empleado", "Proveedor" };
+//    foreach (var role in roles)
+//    {
+//        if (!roleManager.RoleExistsAsync(role).Result)
+//        {
+//            roleManager.CreateAsync(new IdentityRole(role)).Wait();
+//        }
+//    }
+
+//    // Crear un usuario de prueba con el rol "Admin" si no existe
+//    string emailAdmin = "admin@almacen.com";
+//    if (userManager.FindByEmailAsync(emailAdmin).Result == null)
+//    {
+//        IdentityUser adminUser = new IdentityUser
+//        {
+//            UserName = emailAdmin,
+//            Email = emailAdmin
+//        };
+
+//        IdentityResult result = userManager.CreateAsync(adminUser, "Password123!").Result;
+//        if (result.Succeeded)
+//        {
+//            userManager.AddToRoleAsync(adminUser, "Admin").Wait();
+//        }
+//    }
+//}
 
 app.Run();
