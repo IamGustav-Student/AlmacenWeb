@@ -61,6 +61,13 @@ namespace AlmacenWeb.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Opcional: Verificar si el CodigoBarra ya existe
+                if (await _context.Productos.AnyAsync(p => p.CodigoBarra == producto.CodigoBarra))
+                {
+                    ModelState.AddModelError("CodigoBarra", "Ya existe un producto con este código de barras.");
+                    return View(producto);
+                }
+
                 _context.Add(producto);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using AlmacenWeb.ViewModels;
+using System.ComponentModel.DataAnnotations;
 
 namespace AlmacenWeb.Models
 {
@@ -6,6 +7,7 @@ namespace AlmacenWeb.Models
     {
         [Key]
         public int DVId { get; set; }
+        public decimal Total { get; set; }
 
         public int VentaId { get; set; }
         public Venta Venta { get; set; }
@@ -16,5 +18,8 @@ namespace AlmacenWeb.Models
         public int Cantidad { get; set; }
 
         public decimal PrecioUnitario { get; set; }
+
+        
+
     }
 }
