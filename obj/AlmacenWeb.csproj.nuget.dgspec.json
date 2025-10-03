@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\TSDS 2° Año\\Programacion 2° Año\\Proyecto Final\\AlmacenWeb\\AlmacenWeb.csproj": {}
+    "C:\\Users\\iamgu\\source\\repos\\IamGustav-Student\\AlmacenWeb\\AlmacenWeb.csproj": {}
   },
   "projects": {
-    "E:\\TSDS 2° Año\\Programacion 2° Año\\Proyecto Final\\AlmacenWeb\\AlmacenWeb.csproj": {
+    "C:\\Users\\iamgu\\source\\repos\\IamGustav-Student\\AlmacenWeb\\AlmacenWeb.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\TSDS 2° Año\\Programacion 2° Año\\Proyecto Final\\AlmacenWeb\\AlmacenWeb.csproj",
+        "projectUniqueName": "C:\\Users\\iamgu\\source\\repos\\IamGustav-Student\\AlmacenWeb\\AlmacenWeb.csproj",
         "projectName": "AlmacenWeb",
-        "projectPath": "E:\\TSDS 2° Año\\Programacion 2° Año\\Proyecto Final\\AlmacenWeb\\AlmacenWeb.csproj",
+        "projectPath": "C:\\Users\\iamgu\\source\\repos\\IamGustav-Student\\AlmacenWeb\\AlmacenWeb.csproj",
         "packagesPath": "C:\\Users\\iamgu\\.nuget\\packages\\",
-        "outputPath": "E:\\TSDS 2° Año\\Programacion 2° Año\\Proyecto Final\\AlmacenWeb\\obj\\",
+        "outputPath": "C:\\Users\\iamgu\\source\\repos\\IamGustav-Student\\AlmacenWeb\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

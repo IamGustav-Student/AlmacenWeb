@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "VW+YPHBF4dM=",
+  "dgSpecHash": "MmjU4ZLDk60=",
   "success": true,
-  "projectFilePath": "E:\\TSDS 2° Año\\Programacion 2° Año\\Proyecto Final\\AlmacenWeb\\AlmacenWeb.csproj",
+  "projectFilePath": "C:\\Users\\iamgu\\source\\repos\\IamGustav-Student\\AlmacenWeb\\AlmacenWeb.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\iamgu\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\iamgu\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",

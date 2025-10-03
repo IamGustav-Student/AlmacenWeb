@@ -1,0 +1,59 @@
+﻿@model IEnumerable<AlmacenWeb.Models.Cliente>
+
+@{
+    ViewData["Title"] = "Gestion de Clientes";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ClNombre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ClApellido)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ClDireccion)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ClTelefono)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ClEmail)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ClNombre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ClApellido)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ClDireccion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ClTelefono)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ClEmail)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.ClId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.ClId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.ClId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
