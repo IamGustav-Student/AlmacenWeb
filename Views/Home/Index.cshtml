@@ -75,15 +75,14 @@
     </div>
 </div>
 
+<h2 class="fs-4 mb-3">Módulos del Sistema</h2>
 <div class="row g-4 mb-4">
-
-    <h2 class="fs-4 mb-3">Módulos del Sistema</h2>
 
     @if (User.IsInRole("Admin") || User.IsInRole("Dueño") || User.IsInRole("Empleado"))
     {
-        <div class="col-md-6 col-lg-4">
-            <a asp-controller="Ventas" asp-action="PuntoVenta" class="text-decoration-none">
-                <div class="card dashboard-card shadow-sm h-100 text-decoration-none">
+        <div class="col-md-6 col-lg-4 d-flex">
+            <a asp-controller="Ventas" asp-action="PuntoVenta" class="text-decoration-none w-100 h-100">
+                <div class="card dashboard-card shadow-sm h-100">
                     <div class="card-body d-flex align-items-center">
                         <i class="bi bi-cart-plus-fill display-4 text-success me-4"></i>
                         <div>
@@ -95,9 +94,9 @@
             </a>
         </div>
 
-        <div class="col-md-6 col-lg-4">
-            <a asp-controller="Productos" asp-action="Index" class="text-decoration-none">
-                <div class="card dashboard-card shadow-sm h-100 text-decoration-none">
+        <div class="col-md-6 col-lg-4 d-flex">
+            <a asp-controller="Productos" asp-action="Index" class="text-decoration-none w-100 h-100">
+                <div class="card dashboard-card shadow-sm h-100">
                     <div class="card-body d-flex align-items-center">
                         <i class="bi bi-boxes display-4 text-primary me-4"></i>
                         <div>
@@ -109,9 +108,9 @@
             </a>
         </div>
 
-        <div class="col-md-6 col-lg-4">
-            <a asp-controller="Clientes" asp-action="Index" class="text-decoration-none">
-                <div class="card dashboard-card shadow-sm h-100 text-decoration-none">
+        <div class="col-md-6 col-lg-4 d-flex">
+            <a asp-controller="Clientes" asp-action="Index" class="text-decoration-none w-100 h-100">
+                <div class="card dashboard-card shadow-sm h-100">
                     <div class="card-body d-flex align-items-center">
                         <i class="bi bi-person-lines-fill display-4 text-info me-4"></i>
                         <div>
@@ -124,9 +123,26 @@
         </div>
     }
 
-    <div class="col-md-6 col-lg-4">
-        <a asp-controller="Ventas" asp-action="Index" class="text-decoration-none">
-            <div class="card dashboard-card shadow-sm h-100 text-decoration-none">
+    @if (User.IsInRole("Admin") || User.IsInRole("Dueño"))
+    {
+        <div class="col-md-6 col-lg-4 d-flex">
+            <a asp-controller="Usuarios" asp-action="Index" class="text-decoration-none">
+                <div class="card dashboard-card shadow-sm h-100" style="border-left-color: var(--bs-danger);">
+                    <div class="card-body d-flex align-items-center">
+                        <i class="bi bi-people-fill display-4 text-danger me-4"></i>
+                        <div>
+                            <h5 class="card-title mb-1">Gestionar Usuarios</h5>
+                            <p class="card-text text-muted small">Administrar las cuentas y roles del sistema.</p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    }
+
+    <div class="col-md-6 col-lg-4 d-flex">
+        <a asp-controller="Ventas" asp-action="Index" class="text-decoration-none w-100 h-100">
+            <div class="card dashboard-card shadow-sm h-100">
                 <div class="card-body d-flex align-items-center">
                     <i class="bi bi-file-earmark-bar-graph display-4 text-secondary me-4"></i>
                     <div>
@@ -134,37 +150,24 @@
                         <p class="card-text text-muted small">Ver el historial de transacciones.</p>
                     </div>
                 </div>
+            </div>
         </a>
     </div>
 
-
-    @if (User.IsInRole("Admin") || User.IsInRole("Dueño"))
-    {
-        <div class="col-md-6 col-lg-4">
-            <div class="card dashboard-card shadow-sm h-100 text-decoration-none" style="border-left-color: var(--bs-danger);">
-                <div class="card-body d-flex align-items-center">
-                    <i class="bi bi-people-fill display-4 text-danger me-4"></i>
-                    <div>
-                        <h5 class="card-title mb-1">Gestionar Usuarios</h5>
-                        <p class="card-text text-muted small">Administrar las cuentas y roles del sistema.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    }
-
     @if (User.IsInRole("Admin"))
     {
-        <div class="col-md-6 col-lg-4">
-            <div class="card dashboard-card shadow-sm h-100 text-decoration-none" style="border-left-color: var(--bs-dark);">
-                <div class="card-body d-flex align-items-center">
+        <div class="col-md-6 col-lg-4 d-flex">
+            <a asp-controller="Roles" asp-action="Index" class="text-decoration-none">
+                <div class="card dashboard-card shadow-sm h-100" style="border-left-color: var(--bs-dark);">
+                    <div class="card-body d-flex align-items-center">
                     <i class="bi bi-key-fill display-4 text-dark me-4"></i>
-                    <div>
-                        <h5 class="card-title mb-1">Gestionar Roles</h5>
-                        <p class="card-text text-muted small">Definir los permisos y roles del sistema.</p>
+                        <div>
+                            <h5 class="card-title mb-1">Gestionar Roles</h5>
+                            <p class="card-text text-muted small">Definir los permisos y roles del sistema.</p>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </a>
         </div>
     }
 </div>

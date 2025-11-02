@@ -3,6 +3,7 @@ using AlmacenWeb.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // --- Configuración de Servicios ---
@@ -17,6 +18,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Servicio de Encriptación
 // Lo registramos como "Scoped" para que se cree una instancia por cada petición web
 builder.Services.AddScoped<Encrypt>();
+// Configurar los EmailSettings desde appsettings.json
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+// Registrar el servicio de Email
+builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 // 4. Configuración de Autenticación por Cookies
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

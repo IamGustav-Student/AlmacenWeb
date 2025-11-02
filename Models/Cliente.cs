@@ -13,6 +13,7 @@ namespace AlmacenWeb.Models
         [Display(Name = "Nombre")]
         public string ClNombre { get; set; }
 
+        [Required(ErrorMessage = "El apellido es obligatorio")]
         [MaxLength(100)]
         [Display(Name = "Apellido")]
         public string ClApellido { get; set; }
@@ -37,6 +38,6 @@ namespace AlmacenWeb.Models
         public string ClEmail { get; set; }
 
         // Propiedad de navegación: Un cliente puede tener muchas ventas
-         public virtual ICollection<Venta> Ventas { get; set; }
+         //public virtual ICollection<Venta> Ventas { get; set; }
     }
 }

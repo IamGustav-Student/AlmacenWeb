@@ -18,6 +18,7 @@ namespace AlmacenWeb.Data
         public DbSet<Cliente> Clientes { get; set; }
         public DbSet<Venta> Ventas { get; set; }
         public DbSet<DetalleVenta> DetalleVenta { get; set; }
+        public DbSet<Proveedor> Proveedor { get; set; }
 
 
         // Esta lógica crea los Roles

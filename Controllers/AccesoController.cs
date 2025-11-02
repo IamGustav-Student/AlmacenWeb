@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Security.Claims;
-using System.Threading.Tasks;
+using AlmacenWeb.ViewModels;
+using System;
+using AlmacenWeb.Services;
 
 namespace AlmacenWeb.Controllers
 {
@@ -15,11 +17,14 @@ namespace AlmacenWeb.Controllers
     {
         private readonly AppDbContext _context;
         private readonly Encrypt _encrypt;
+        private readonly IEmailSender _emailSender;
 
-        public AccesoController(AppDbContext context, Encrypt encrypt)
+
+        public AccesoController(AppDbContext context, Encrypt encrypt, IEmailSender emailSender)
         {
             _context = context;
             _encrypt = encrypt;
+            _emailSender = emailSender;
         }
 
         // GET: /Acceso/ o /Acceso/Index
@@ -107,45 +112,42 @@ namespace AlmacenWeb.Controllers
         // POST: /Acceso/Registrarse
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Registrarse(Usuario usuario)
+        public async Task<IActionResult> Registrarse(RegistroViewModel model)
         {
-            // --- ¡CORRECCIÓN! ---
-            // Removemos 'RoId' y 'Rol' de la validación del modelo.
-            // El modelo 'Usuario' los marca como [Required], pero en el
-            // registro público (self-service), el Rol se asigna automáticamente.
-            ModelState.Remove("RoId");
-            ModelState.Remove("Rol");
-            // ---------------------
-
-            // Ahora sí, validamos el resto del modelo (Nombre, Email, Pass, etc.)
+            // ¡YA NO SE NECESITA 'ModelState.Remove()'!
+            // El modelo que llega (RegistroViewModel) es exactamente
+            // lo que el formulario envió.
             if (ModelState.IsValid)
             {
                 // 1. Verificar si el email ya existe
-                if (await _context.Usuarios.AnyAsync(u => u.UsEmail == usuario.UsEmail))
+                if (await _context.Usuarios.AnyAsync(u => u.UsEmail == model.UsEmail))
                 {
                     ModelState.AddModelError("UsEmail", "El email ya está registrado.");
-                    return View(usuario);
+                    return View(model);
                 }
 
-                // 2. Asignar rol por defecto "Usuario"
+                // 2. Buscar el rol "Usuario"
                 var rolUsuario = await _context.Roles.FirstOrDefaultAsync(r => r.RoNombre == "Usuario");
-
                 if (rolUsuario == null)
                 {
-                    // Esto sería un error crítico si el DbInitialize no corrió
-                    ModelState.AddModelError(string.Empty, "Error interno al asignar rol. Contacte al administrador.");
-                    // O podríamos usar el ID 4 que sabemos que es, pero buscarlo es más robusto
-                    // usuario.RoId = 4;
-                    return View(usuario);
+                    // Error crítico si el Seeder no corrió
+                    ModelState.AddModelError(string.Empty, "Error interno: Rol de usuario no encontrado.");
+                    return View(model);
                 }
 
-                usuario.RoId = rolUsuario.RoId; // Asignamos el ID del rol "Usuario"
-
-                // 3. Hashear la contraseña
-                usuario.UsPassword = _encrypt.HashPassword(usuario.UsPassword);
-                usuario.UsActivo = true;
-                usuario.UsFechaRegistro = DateTime.Now;
-                usuario.date_created = DateTime.Now; // Aseguramos que este campo también se llene
+                // 3. "Mapear" el ViewModel a la Entidad
+                var usuario = new Usuario
+                {
+                    UsNombre = model.UsNombre,
+                    UsApellido = model.UsApellido,
+                    UsEmail = model.UsEmail,
+                    // ¡Hashear la contraseña del ViewModel!
+                    UsPassword = _encrypt.HashPassword(model.Password),
+                    RoId = rolUsuario.RoId, // Asignar rol por defecto
+                    UsActivo = true,
+                    UsFechaRegistro = DateTime.Now,
+                    date_created = DateTime.Now
+                };
 
                 // 4. Guardar en la BD
                 _context.Add(usuario);
@@ -156,8 +158,9 @@ namespace AlmacenWeb.Controllers
                 return RedirectToAction("Index"); // Redirigir a Login
             }
 
-            // Si el modelo (ej: email inválido, pass vacía) no es válido, volver
-            return View(usuario);
+            // Si el modelo no es válido (ej: contraseñas no coinciden),
+            // volvemos a la vista con el 'model'
+            return View(model);
         }
 
 
@@ -169,5 +172,135 @@ namespace AlmacenWeb.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index", "Acceso"); // Volver al Login
         }
+
+        // --- INICIO MÓDULO RECUPERACIÓN ---
+
+        // GET: /Acceso/StartRecovery
+        [HttpGet]
+        public IActionResult StartRecovery()
+        {
+            // Muestra la vista con el formulario para pedir el email
+            return View(new RecoveryViewModel());
+        }
+
+        // POST: /Acceso/StartRecovery
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> StartRecovery(RecoveryViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var usuario = await _context.Usuarios
+                                    .FirstOrDefaultAsync(u => u.UsEmail == model.Email);
+
+                if (usuario != null)
+                {
+                    // 1. Generar un Token único
+                    var token = Guid.NewGuid().ToString();
+
+                    // 2. Guardar el token y la fecha de expiración (1 hora)
+                    // Usamos el campo date_created como "TokenExpiration"
+                    usuario.Token = token;
+                    usuario.date_created = DateTime.Now.AddHours(1);
+                    _context.Update(usuario);
+                    await _context.SaveChangesAsync();
+
+                    // 3. Construir el enlace de recuperación
+                    var resetLink = Url.Action("RecoveryPassword", "Acceso",
+                                        new { token = token }, Request.Scheme);
+
+                    // 4. Enviar el email
+                    await _emailSender.SendEmailAsync(
+                        model.Email,
+                        "Restablecer Contraseña - AlmacenWeb",
+                        $"Has solicitado restablecer tu contraseña.<br>" +
+                        $"Por favor, haz clic en el siguiente enlace para continuar:<br>" +
+                        $"<a href='{resetLink}'>Restablecer Contraseña</a>" +
+                        $"<br><br>Si no solicitaste esto, ignora este email." +
+                        $"<br>El enlace expira en 1 hora.");
+                }
+
+                // Por seguridad, siempre mostramos el mismo mensaje,
+                // incluso si el email no existe.
+                return View("RecoveryConfirmation");
+            }
+
+            return View(model);
+        }
+
+        // Vista de confirmación
+        [HttpGet]
+        public IActionResult RecoveryConfirmation()
+        {
+            return View();
+        }
+
+        // GET: /Acceso/RecoveryPassword?token=...
+        [HttpGet]
+        public async Task<IActionResult> RecoveryPassword(string token)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                return View("RecoveryError");
+            }
+
+            // Buscar el usuario por el token
+            var usuario = await _context.Usuarios
+                                .FirstOrDefaultAsync(u => u.Token == token);
+
+            // Validar si el token existe Y si no ha expirado
+            // (Usamos date_created como fecha de expiración)
+            if (usuario == null || usuario.date_created == null || usuario.date_created < DateTime.Now)
+            {
+                // Token no válido o expirado
+                return View("RecoveryError");
+            }
+
+            // Token válido, mostrar formulario de nueva contraseña
+            var model = new RecoveryPasswordViewModel
+            {
+                Token = token
+            };
+
+            return View(model);
+        }
+
+        // POST: /Acceso/RecoveryPassword
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RecoveryPassword(RecoveryPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // Volver a validar el token
+                var usuario = await _context.Usuarios
+                                    .FirstOrDefaultAsync(u => u.Token == model.Token);
+
+                if (usuario == null || usuario.date_created == null || usuario.date_created < DateTime.Now)
+                {
+                    return View("RecoveryError");
+                }
+
+                // 1. Hashear la nueva contraseña
+                usuario.UsPassword = _encrypt.HashPassword(model.NewPassword);
+
+                // 2. Invalidar el token para que no se pueda reusar
+                usuario.Token = null;
+                usuario.date_created = null;
+
+                _context.Update(usuario);
+                await _context.SaveChangesAsync();
+
+                // 3. Redirigir al Login con mensaje de éxito
+                TempData["RegistroExitoso"] = "¡Contraseña actualizada! Ya puedes iniciar sesión.";
+                return RedirectToAction("Index");
+            }
+
+            // Si las contraseñas no coinciden, volver a mostrar el formulario
+            return View(model);
+        }
+
+        // --- FIN MÓDULO RECUPERACIÓN ---
+
     }
 }

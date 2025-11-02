@@ -1,0 +1,58 @@
+﻿@model IEnumerable<AlmacenWeb.Models.Proveedor>
+
+@{
+    ViewData["Title"] = "Gestión de Proveedores";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="display-6">
+        <i class="bi bi-truck text-dark"></i>
+        Gestión de Proveedores
+    </h1>
+    <a asp-action="Create" class="btn btn-lg btn-dark">
+        <i class="bi bi-plus-circle-fill me-2"></i>
+        Nuevo Proveedor
+    </a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model.NombreEmpresa)</th>
+                        <th>@Html.DisplayNameFor(model => model.Cuit)</th>
+                        <th>@Html.DisplayNameFor(model => model.Telefono)</th>
+                        <th>@Html.DisplayNameFor(model => model.Email)</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.NombreEmpresa)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Cuit)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Telefono)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Email)</td>
+
+                            <td class="text-end" style="min-width: 190px;">
+                                <a asp-action="Edit" asp-route-id="@item.ProveedorId" class="btn btn-sm btn-outline-primary" title="Editar">
+                                    <i class="bi bi-pencil-fill"></i>
+                                </a>
+                                <a asp-action="Details" asp-route-id="@item.ProveedorId" class="btn btn-sm btn-outline-info" title="Detalles">
+                                    <i class="bi bi-eye-fill"></i>
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.ProveedorId" class="btn btn-sm btn-outline-danger" title="Borrar">
+                                    <i class="bi bi-trash-fill"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

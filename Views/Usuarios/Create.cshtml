@@ -1,0 +1,85 @@
+﻿@model AlmacenWeb.ViewModels.UsuarioCreateViewModel
+
+@{
+    ViewData["Title"] = "Crear Usuario";
+    // Usamos el SelectList de Roles que pasamos desde el controlador
+    var rolesList = ViewData["RoId"] as SelectList;
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="bi bi-person-plus-fill me-2 text-danger"></i>
+                    Crear Nuevo Usuario (Admin)
+                </h4>
+            </div>
+            <div class="card-body">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="UsNombre" class="form-label"></label>
+                            <input asp-for="UsNombre" class="form-control" />
+                            <span asp-validation-for="UsNombre" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="UsApellido" class="form-label"></label>
+                            <input asp-for="UsApellido" class="form-control" />
+                            <span asp-validation-for="UsApellido" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="UsEmail" class="form-label"></label>
+                        <input asp-for="UsEmail" class="form-control" />
+                        <span asp-validation-for="UsEmail" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label"></label>
+                        <input asp-for="Password" class="form-control" type="password" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="RoId" class="form-label"></label>
+                            <select asp-for="RoId" class="form-select" asp-items="rolesList">
+                                <option value="">-- Seleccionar Rol --</option>
+                            </select>
+                            <span asp-validation-for="RoId" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3 d-flex align-items-center pt-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" asp-for="UsActivo" />
+                                <label class="form-check-label" asp-for="UsActivo"></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-lg me-1"></i>
+                            Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-check-lg me-1"></i>
+                            Crear Usuario
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
