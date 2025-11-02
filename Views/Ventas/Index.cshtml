@@ -1,0 +1,49 @@
+﻿@model IEnumerable<AlmacenWeb.Models.Venta>
+@{
+    ViewData["Title"] = "Historial de Ventas";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="display-6">
+        <i class="bi bi-file-earmark-bar-graph text-secondary"></i>
+        Historial de Ventas
+    </h1>
+    <a asp-action="PuntoVenta" class="btn btn-lg btn-success">
+        <i class="bi bi-cart-plus-fill me-2"></i>
+        Nueva Venta (POS)
+    </a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>ID Venta</th>
+                    <th>Fecha</th>
+                    <th>Cliente</th>
+                    <th>Vendedor</th>
+                    <th>Total</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.VeId)</td>
+                        <td>@Html.DisplayFor(modelItem => item.VeFecha)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Cliente.ClNombre) @Html.DisplayFor(modelItem => item.Cliente.ClApellido)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Usuario.UsNombre)</td>
+                        <td>@item.VeTotal.ToString("C")</td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@item.VeId" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-eye-fill"></i> Detalles
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

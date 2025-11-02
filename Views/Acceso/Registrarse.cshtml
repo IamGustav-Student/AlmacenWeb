@@ -1,0 +1,65 @@
+﻿@model AlmacenWeb.Models.Usuario
+@{
+    ViewData["Title"] = "Registrarse";
+    Layout = "_Layout";
+}
+
+<div class="container register-container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card register-card">
+                <div class="card-header bg-gradient text-white">
+                    <h3 class="card-title text-center mb-0">Crear una Cuenta</h3>
+                </div>
+                <div class="card-body p-4">
+
+                    <form asp-action="Registrarse" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="UsNombre" class="form-label"></label>
+                                <input asp-for="UsNombre" class="form-control" />
+                                <span asp-validation-for="UsNombre" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="UsApellido" class="form-label"></label>
+                                <input asp-for="UsApellido" class="form-control" />
+                                <span asp-validation-for="UsApellido" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="UsEmail" class="form-label"></label>
+                            <input asp-for="UsEmail" class="form-control" placeholder="Será tu nombre de usuario" />
+                            <span asp-validation-for="UsEmail" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="UsPassword" class="form-label"></label>
+                            <input asp-for="UsPassword" type="password" class="form-control" />
+                            <span asp-validation-for="UsPassword" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-register">Crear Cuenta</button>
+                        </div>
+
+                        <hr />
+
+                        <div class="text-center">
+                            <p>¿Ya tienes una cuenta?</p>
+                            <a asp-action="Index" class="btn btn-outline-primary">Iniciar Sesión</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

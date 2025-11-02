@@ -1,0 +1,73 @@
+﻿@model AlmacenWeb.Models.Login
+@{
+    ViewData["Title"] = "Iniciar Sesión";
+    Layout = "_Layout"; // Usamos nuestro layout principal
+}
+
+<div class="container register-container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card register-card">
+                <div class="card-header bg-gradient text-white">
+                    <h3 class="card-title text-center mb-0">Iniciar Sesión</h3>
+                </div>
+                <div class="card-body p-4">
+
+                    <form asp-action="Index" method="post">
+
+                        @* Mensaje de error (si falla el login) *@
+                        @if (ViewData["Mensaje"] != null)
+                        {
+                            <div class="alert alert-danger" role="alert">
+                                @ViewData["Mensaje"]
+                            </div>
+                        }
+                        @* Mensaje de éxito (si viene de registrarse) *@
+                        @if (TempData["RegistroExitoso"] != null)
+                        {
+                            <div class="alert alert-success" role="alert">
+                                @TempData["RegistroExitoso"]
+                            </div>
+                        }
+
+                        <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label"></label>
+                            <input asp-for="Email" class="form-control" placeholder="ejemplo@correo.com" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label"></label>
+                            <input asp-for="Password" class="form-control" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-register">Ingresar</button>
+                        </div>
+
+                        <div class="text-center mt-3">
+                            <a asp-action="StartRecovery">¿Olvidaste tu contraseña?</a>
+                        </div>
+
+                        <hr />
+
+                        <div class="text-center">
+                            <p>¿No tienes una cuenta?</p>
+                            <a asp-action="Registrarse" class="btn btn-outline-success">Registrarse</a>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

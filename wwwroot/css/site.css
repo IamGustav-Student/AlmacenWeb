@@ -1,0 +1,151 @@
+﻿html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    background: linear-gradient(to right, #e0eafc, #cfdef3);
+    margin-bottom: 60px;
+}
+/* Estilo para el contenedor de la lista de productos */
+/*.product-list-container {
+    background-color: darkgoldenrod;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    height: 100%;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+}*/
+/* ------------------------------------------- */
+/* Estilos para Vistas de Acceso (Login/Registro/Recuperaci�n) */
+/* ------------------------------------------- */
+
+/* Contenedor principal para centrar el formulario */
+.register-container {
+    padding-top: 50px;
+    padding-bottom: 50px;
+    min-height: 100vh; /* Asegura que ocupe toda la altura */
+}
+
+/* Estilo para la tarjeta/formulario de registro */
+.register-card {
+    border: none;
+    border-radius: 1rem;
+    overflow: hidden;
+    /* Sombras m�s suaves y modernas */
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15), 0 0.1875rem 0.625rem rgba(0, 0, 0, 0.05);
+}
+
+    /* Estilo para el encabezado con degradado */
+    .register-card .bg-gradient {
+        /* Degradado de ejemplo */
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        border-bottom: none;
+        padding: 1.5rem;
+    }
+
+    /* Estilo de los campos de entrada */
+    .register-card .form-control {
+        border-radius: 0.5rem;
+        border: 1px solid #ced4da;
+        padding: 0.75rem 1rem;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+        .register-card .form-control:focus {
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+/* Estilo para el bot�n de registro */
+.btn-register {
+    background-color: #007bff;
+    border-color: #007bff;
+    font-weight: bold;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s;
+}
+
+    .btn-register:hover {
+        background-color: #0056b3;
+        border-color: #004d99;
+    }
+
+/* Estilo de validaci�n para errores */
+.field-validation-error {
+    font-size: 0.875em;
+}
+
+.input-validation-error {
+    border-color: #dc3545 !important;
+}
+
+/* Ajuste de color de fondo (opcional, si el body es blanco) */
+body {
+    background-color: #f8f9fa;
+}
+/*
+-------------------------------------
+ Estilos para el Dashboard (Home/Index)
+-------------------------------------
+*/
+
+/* Tarjetas de Accesos Directos */
+.dashboard-card {
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+    border: 0;
+    border-left: 5px solid var(--bs-primary);
+}
+
+    .dashboard-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
+    }
+
+    /* Colores de borde personalizados para las tarjetas */
+    .dashboard-card:nth-child(1) {
+        border-left-color: var(--bs-success);
+    }
+    /* Punto de Venta */
+    .dashboard-card:nth-child(2) {
+        border-left-color: var(--bs-primary);
+    }
+    /* Productos */
+    .dashboard-card:nth-child(3) {
+        border-left-color: var(--bs-info);
+    }
+    /* Clientes */
+    .dashboard-card:nth-child(4) {
+        border-left-color: var(--bs-secondary);
+    }
+/* Reportes */
+
+
+/* Tarjetas de Estad�sticas (KPI) */
+.kpi-card {
+    border-width: 0;
+    border-bottom: 5px solid;
+}
+
+    .kpi-card .card-title {
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }

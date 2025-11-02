@@ -1,0 +1,170 @@
+﻿@model AlmacenWeb.ViewModels.DashboardViewModel
+@{
+    ViewData["Title"] = "Panel de Control";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="display-6">
+        <i class="bi bi-house-door-fill text-primary"></i>
+        Panel de Control
+    </h1>
+    <span class="fs-5 text-muted">@DateTime.Now.ToString("dd 'de' MMMM, yyyy")</span>
+</div>
+<p class="fs-5 text-muted mb-4">Bienvenido al sistema de gestión de Almacen.</p>
+
+<div class="row g-4 mb-4">
+
+    <div class="col-md-6 col-lg-3">
+        <div class="card kpi-card bg-primary-subtle border-primary-subtle shadow-sm h-100">
+            <div class="card-body text-primary">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h5 class="card-title text-primary-emphasis">VENTAS DE HOY</h5>
+                        <h2 class="display-5 fw-bold">@Model.VentasHoy</h2>
+                    </div>
+                    <i class="bi bi-cash-coin fs-1 opacity-50"></i>
+                </div>
+                <div class="text-primary-emphasis opacity-75 mt-3">Total: @Model.TotalVentasHoy.ToString("C")</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="card kpi-card bg-success-subtle border-success-subtle shadow-sm h-100">
+            <div class="card-body text-success">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h5 class="card-title text-success-emphasis">PRODUCTOS</h5>
+                        <h2 class="display-5 fw-bold">@Model.TotalProductos</h2>
+                    </div>
+                    <i class="bi bi-box-seam fs-1 opacity-50"></i>
+                </div>
+                <div class="text-success-emphasis opacity-75 mt-3">En stock total</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="card kpi-card bg-info-subtle border-info-subtle shadow-sm h-100">
+            <div class="card-body text-info-emphasis">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h5 class="card-title">CLIENTES</h5>
+                        <h2 class="display-5 fw-bold">@Model.TotalClientes</h2>
+                    </div>
+                    <i class="bi bi-people fs-1 opacity-50"></i>
+                </div>
+                <div class="opacity-75 mt-3"> Esta semana</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="card kpi-card bg-warning-subtle border-warning-subtle shadow-sm h-100">
+            <div class="card-body text-warning-emphasis">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h5 class="card-title">STOCK BAJO</h5>
+                        <h2 class="display-5 fw-bold">@Model.ProductosStockBajo</h2>
+                    </div>
+                    <i class="bi bi-exclamation-triangle fs-1 opacity-50"></i>
+                </div>
+                <div class="opacity-75 mt-3">Productos por reponer</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+
+    <h2 class="fs-4 mb-3">Módulos del Sistema</h2>
+
+    @if (User.IsInRole("Admin") || User.IsInRole("Dueño") || User.IsInRole("Empleado"))
+    {
+        <div class="col-md-6 col-lg-4">
+            <a asp-controller="Ventas" asp-action="PuntoVenta" class="text-decoration-none">
+                <div class="card dashboard-card shadow-sm h-100 text-decoration-none">
+                    <div class="card-body d-flex align-items-center">
+                        <i class="bi bi-cart-plus-fill display-4 text-success me-4"></i>
+                        <div>
+                            <h5 class="card-title mb-1">Punto de Venta</h5>
+                            <p class="card-text text-muted small">Registrar nuevas transacciones y ventas.</p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <a asp-controller="Productos" asp-action="Index" class="text-decoration-none">
+                <div class="card dashboard-card shadow-sm h-100 text-decoration-none">
+                    <div class="card-body d-flex align-items-center">
+                        <i class="bi bi-boxes display-4 text-primary me-4"></i>
+                        <div>
+                            <h5 class="card-title mb-1">Gestionar Productos</h5>
+                            <p class="card-text text-muted small">Administrar el inventario.</p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <a asp-controller="Clientes" asp-action="Index" class="text-decoration-none">
+                <div class="card dashboard-card shadow-sm h-100 text-decoration-none">
+                    <div class="card-body d-flex align-items-center">
+                        <i class="bi bi-person-lines-fill display-4 text-info me-4"></i>
+                        <div>
+                            <h5 class="card-title mb-1">Gestionar Clientes</h5>
+                            <p class="card-text text-muted small">Administrar la base de datos de clientes.</p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    }
+
+    <div class="col-md-6 col-lg-4">
+        <a asp-controller="Ventas" asp-action="Index" class="text-decoration-none">
+            <div class="card dashboard-card shadow-sm h-100 text-decoration-none">
+                <div class="card-body d-flex align-items-center">
+                    <i class="bi bi-file-earmark-bar-graph display-4 text-secondary me-4"></i>
+                    <div>
+                        <h5 class="card-title mb-1">Reporte de Ventas</h5>
+                        <p class="card-text text-muted small">Ver el historial de transacciones.</p>
+                    </div>
+                </div>
+        </a>
+    </div>
+
+
+    @if (User.IsInRole("Admin") || User.IsInRole("Dueño"))
+    {
+        <div class="col-md-6 col-lg-4">
+            <div class="card dashboard-card shadow-sm h-100 text-decoration-none" style="border-left-color: var(--bs-danger);">
+                <div class="card-body d-flex align-items-center">
+                    <i class="bi bi-people-fill display-4 text-danger me-4"></i>
+                    <div>
+                        <h5 class="card-title mb-1">Gestionar Usuarios</h5>
+                        <p class="card-text text-muted small">Administrar las cuentas y roles del sistema.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="col-md-6 col-lg-4">
+            <div class="card dashboard-card shadow-sm h-100 text-decoration-none" style="border-left-color: var(--bs-dark);">
+                <div class="card-body d-flex align-items-center">
+                    <i class="bi bi-key-fill display-4 text-dark me-4"></i>
+                    <div>
+                        <h5 class="card-title mb-1">Gestionar Roles</h5>
+                        <p class="card-text text-muted small">Definir los permisos y roles del sistema.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

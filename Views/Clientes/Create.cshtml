@@ -1,0 +1,80 @@
+﻿@model AlmacenWeb.Models.Cliente
+
+@{
+    ViewData["Title"] = "Crear Cliente";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="bi bi-person-plus-fill me-2"></i>
+                    Crear Nuevo Cliente
+                </h4>
+            </div>
+            <div class="card-body">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ClNombre" class="form-label"></label>
+                            <input asp-for="ClNombre" class="form-control" />
+                            <span asp-validation-for="ClNombre" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ClApellido" class="form-label"></label>
+                            <input asp-for="ClApellido" class="form-control" />
+                            <span asp-validation-for="ClApellido" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ClDniCuit" class="form-label"></label>
+                        <input asp-for="ClDniCuit" class="form-control" />
+                        <span asp-validation-for="ClDniCuit" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ClDireccion" class="form-label"></label>
+                        <input asp-for="ClDireccion" class="form-control" />
+                        <span asp-validation-for="ClDireccion" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ClTelefono" class="form-label"></label>
+                            <input asp-for="ClTelefono" class="form-control" />
+                            <span asp-validation-for="ClTelefono" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ClEmail" class="form-label"></label>
+                            <input asp-for="ClEmail" class="form-control" />
+                            <span asp-validation-for="ClEmail" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-lg me-1"></i>
+                            Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg me-1"></i>
+                            Crear
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
