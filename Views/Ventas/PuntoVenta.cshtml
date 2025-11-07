@@ -5,7 +5,7 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="display-6">
         <i class="bi bi-cart-plus-fill text-success"></i>
-        Punto de Venta (POS)
+        Punto de Venta
     </h1>
 </div>
 
@@ -16,7 +16,7 @@
                 <h5 class="card-title"><i class="bi bi-search me-2"></i>Buscar Producto</h5>
                 <div class="input-group">
                     <span class="input-group-text"><i class="bi bi-barcode-scan"></i></span>
-                    <input type="text" id="buscarProducto" class="form-control form-control-lg" placeholder="Escanear o escribir nombre del producto...">
+                    <input type="text" id="buscarProducto" class="form-control form-control-lg" placeholder="Escanear o escribir nombre del producto..." autofocus>
                 </div>
             </div>
         </div>
@@ -159,6 +159,48 @@
                     return false;
                 }
             });
+
+            // 2. --- (FIN BÚSQUEDA DE PRODUCTOS - AUTOCOMPLETE) ---
+
+        // --- [NUEVO SCRIPT PARA SCANNER (TECLA ENTER)] ---
+        $("#buscarProducto").on("keydown", async function(e) {
+
+            // Si la tecla presionada no es "Enter" (código 13), no hacer nada.
+            if (e.key !== "Enter" && e.keyCode !== 13) {
+                return;
+            }
+
+            // 1. Prevenir que el "Enter" envíe el formulario (comportamiento por defecto)
+            e.preventDefault();
+
+            const codigo = $(this).val();
+            if (codigo.length < 3) { // Ignorar si es muy corto
+                return;
+            }
+
+            // 2. Limpiar el input inmediatamente
+            $(this).val("");
+            // (Opcional) Desenfocar el autocomplete si está abierto
+            $(this).autocomplete("close");
+
+            // 3. Llamar a nuestro NUEVO endpoint
+            try {
+                const response = await fetch(`@Url.Action("GetProductoPorCodigo", "Ventas")?codigo=${codigo}`);
+
+                if (response.ok) {
+                    const producto = await response.json();
+                    // 4. Éxito: Usamos la misma función que el autocomplete
+                    agregarProductoAlCarrito(producto);
+                } else {
+                    // 5. Fracaso: Producto no encontrado
+                    mostrarAlerta(false, "Producto no encontrado o sin stock.");
+                }
+            } catch (error) {
+                mostrarAlerta(false, "Error de conexión al buscar producto.");
+            }
+        });
+        // --- [FIN SCRIPT PARA SCANNER] ---
+
 
             // 3. --- LÓGICA DEL CARRITO ---
 

@@ -1,0 +1,98 @@
+﻿@{
+    ViewData["Title"] = "Cargar Inventario por Scanner";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="bi bi-upc-scan me-2"></i>
+                    Cargar Inventario por Scanner
+                </h4>
+            </div>
+            <div class="card-body text-center p-4">
+
+                <h5 class="card-title">Escanear Código de Barras</h5>
+                <p class="text-muted">
+                    Use el lector de código de barras o escriba el código manualmente y presione "Enter".
+                </p>
+
+                <div class="input-group input-group-lg my-3">
+                    <span class="input-group-text"><i class="bi bi-barcode-scan"></i></span>
+                    <input type="text" id="scannerInput" class="form-control" placeholder="Esperando escaneo..." autofocus />
+                </div>
+
+                <div id="scannerSpinner" class="spinner-border text-primary" role="status" style="display: none;">
+                    <span class="visually-hidden">Buscando...</span>
+                </div>
+
+                <div id="scannerFeedback" class="alert" role="alert" style="display: none;">
+                </div>
+
+                <hr />
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-1"></i>
+                    Volver a la Lista de Productos
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            var input = $("#scannerInput");
+            var spinner = $("#scannerSpinner");
+            var feedback = $("#scannerFeedback");
+
+            input.on("keydown", async function(e) {
+                // 1. Solo actuar si se presiona "Enter"
+                if (e.key !== "Enter" && e.keyCode !== 13) {
+                    return;
+                }
+
+                e.preventDefault(); // Evitar que el "Enter" envíe un formulario
+
+                var codigo = input.val();
+                if (codigo.length === 0) {
+                    return;
+                }
+
+                // 2. Mostrar feedback visual
+                spinner.show();
+                feedback.hide();
+                input.prop("disabled", true);
+
+                try {
+                    // 3. Llamar a nuestra API
+                    const response = await fetch(`@Url.Action("BuscarProductoPorCodigo", "Productos")?codigo=${codigo}`);
+
+                    if (response.ok) {
+                        const result = await response.json();
+
+                        // 4. Redirigir a la URL que nos dio el controlador
+                        feedback.removeClass("alert-danger").addClass("alert-success").text(result.message).show();
+
+                        // Redirigir después de 1 segundo
+                        setTimeout(() => {
+                            window.location.href = result.redirectTo;
+                        }, 1000);
+
+                    } else {
+                        const error = await response.json();
+                        feedback.removeClass("alert-success").addClass("alert-danger").text(error.message).show();
+                        spinner.hide();
+                        input.prop("disabled", false).val("").focus();
+                    }
+
+                } catch (error) {
+                    feedback.removeClass("alert-success").addClass("alert-danger").text("Error de conexión.").show();
+                    spinner.hide();
+                    input.prop("disabled", false).val("").focus();
+                }
+            });
+        });
+    </script>
+}

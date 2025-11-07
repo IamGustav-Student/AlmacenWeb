@@ -99,7 +99,7 @@ namespace AlmacenWeb.Controllers
             }
 
             var productos = await _context.Productos
-                .Where(p => (p.PrNombre.Contains(term) || p.CodigoBarra.Contains(term)) && p.CantidadDisponible > 0)
+                .Where(p => p.PrNombre.Contains(term) && p.CantidadDisponible > 0)
                 .Select(p => new {
                     id = p.PrId,
                     label = $"{p.PrNombre} (Stock: {p.CantidadDisponible})",
@@ -109,6 +109,38 @@ namespace AlmacenWeb.Controllers
                 .ToListAsync();
 
             return Json(productos);
+        }
+        // GET: /Ventas/GetProductoPorCodigo?codigo=...
+        [HttpGet]
+        public async Task<IActionResult> GetProductoPorCodigo(string codigo)
+        {
+            if (string.IsNullOrEmpty(codigo))
+            {
+                return BadRequest("El código no puede ser nulo.");
+            }
+
+            // Buscamos el producto por código de barras exacto y que tenga stock
+            var producto = await _context.Productos
+                .Where(p => p.CodigoBarra == codigo && p.CantidadDisponible > 0)
+                .FirstOrDefaultAsync();
+
+            if (producto == null)
+            {
+                // Si no se encuentra, devolvemos un 404 (Not Found)
+                return NotFound(new { message = "Producto no encontrado o sin stock." });
+            }
+
+            // Si se encuentra, devolvemos el objeto en el formato
+            // exacto que espera la función JavaScript 'agregarProductoAlCarrito'
+            var productoViewModel = new
+            {
+                id = producto.PrId,
+                label = $"{producto.PrNombre} (Stock: {producto.CantidadDisponible})",
+                precio = producto.Precio,
+                stock = producto.CantidadDisponible
+            };
+
+            return Json(productoViewModel);
         }
 
         // --- [LÓGICA DE REGISTRO DE VENTA] ---
