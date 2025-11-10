@@ -36,7 +36,7 @@ namespace AlmacenWeb.Controllers
             {
                 return RedirectToAction("Index", "Home");
             }
-            return View("Login"); // Muestra la vista Login.cshtml
+            return View("Login"); // Muestra la vista Login
         }
 
         // POST: /Acceso/Index
@@ -87,7 +87,7 @@ namespace AlmacenWeb.Controllers
                 var authProperties = new AuthenticationProperties
                 {
                     AllowRefresh = true,
-                    // IsPersistent = true (para "Recordarme")
+                    
                 };
 
                 // 4. Iniciar Sesión (crear la cookie)
@@ -114,9 +114,8 @@ namespace AlmacenWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Registrarse(RegistroViewModel model)
         {
-            // ¡YA NO SE NECESITA 'ModelState.Remove()'!
-            // El modelo que llega (RegistroViewModel) es exactamente
-            // lo que el formulario envió.
+           
+            
             if (ModelState.IsValid)
             {
                 // 1. Verificar si el email ya existe
@@ -155,11 +154,10 @@ namespace AlmacenWeb.Controllers
 
                 // 5. Redirigir a Login con mensaje de éxito
                 TempData["RegistroExitoso"] = "¡Cuenta creada! Ya puedes iniciar sesión.";
-                return RedirectToAction("Index"); // Redirigir a Login
+                return RedirectToAction("Index"); 
             }
 
-            // Si el modelo no es válido (ej: contraseñas no coinciden),
-            // volvemos a la vista con el 'model'
+            
             return View(model);
         }
 
@@ -168,12 +166,12 @@ namespace AlmacenWeb.Controllers
         [HttpGet]
         public async Task<IActionResult> Salir()
         {
-            // Cerrar sesión (borra la cookie)
+            
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index", "Acceso"); // Volver al Login
         }
 
-        // --- INICIO MÓDULO RECUPERACIÓN ---
+        
 
         // GET: /Acceso/StartRecovery
         [HttpGet]
@@ -195,21 +193,21 @@ namespace AlmacenWeb.Controllers
 
                 if (usuario != null)
                 {
-                    // 1. Generar un Token único
+                    // Generar un Token único
                     var token = Guid.NewGuid().ToString();
 
-                    // 2. Guardar el token y la fecha de expiración (1 hora)
+                    // Guardar el token y la fecha de expiración (1 hora)
                     // Usamos el campo date_created como "TokenExpiration"
                     usuario.Token = token;
                     usuario.date_created = DateTime.Now.AddHours(1);
                     _context.Update(usuario);
                     await _context.SaveChangesAsync();
 
-                    // 3. Construir el enlace de recuperación
+                    // Construir el enlace de recuperación
                     var resetLink = Url.Action("RecoveryPassword", "Acceso",
                                         new { token = token }, Request.Scheme);
 
-                    // 4. Enviar el email
+                    // Enviar el email
                     await _emailSender.SendEmailAsync(
                         model.Email,
                         "Restablecer Contraseña - AlmacenWeb",
@@ -220,7 +218,7 @@ namespace AlmacenWeb.Controllers
                         $"<br>El enlace expira en 1 hora.");
                 }
 
-                // Por seguridad, siempre mostramos el mismo mensaje,
+                // Siempre mostramos el mismo mensaje,
                 // incluso si el email no existe.
                 return View("RecoveryConfirmation");
             }
@@ -300,7 +298,7 @@ namespace AlmacenWeb.Controllers
             return View(model);
         }
 
-        // --- FIN MÓDULO RECUPERACIÓN ---
+       
 
     }
 }

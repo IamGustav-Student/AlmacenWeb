@@ -1,6 +1,6 @@
 ﻿namespace AlmacenWeb.ViewModels
 {
-    // Esta clase agrupa todos los datos que el Dashboard necesita mostrar.
+    
     public class DashboardViewModel
     {
         public int TotalProductos { get; set; }

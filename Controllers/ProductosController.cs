@@ -72,13 +72,7 @@ namespace AlmacenWeb.Controllers
         [AcceptVerbs("GET", "POST")]
         public async Task<IActionResult> IsCodigoBarraAvailable(string CodigoBarra, int PrId)
         {
-            // Lógica:
-            // 1. Busca en la BD si existe algún producto...
-            // 2. ...que tenga este 'CodigoBarra'...
-            // 3. ...y que NO sea el producto que estamos editando actualmente (p.PrId != PrId).
-
-            // Si 'PrId' es 0 (porque estamos en 'Crear'), la comprobación (p.PrId != 0)
-            // siempre será verdadera para los productos existentes.
+            
 
             bool exists = await _context.Productos.AnyAsync(
                 p => p.CodigoBarra == CodigoBarra && p.PrId != PrId
@@ -86,12 +80,11 @@ namespace AlmacenWeb.Controllers
 
             if (exists)
             {
-                // Si existe, la validación falla
-                // Devolvemos el mensaje de error que definimos en el atributo [Remote]
+                
                 return Json($"El código de barras '{CodigoBarra}' ya está en uso.");
             }
 
-            // Si no existe, la validación es exitosa
+            
             return Json(true);
         }
         [HttpPost]
@@ -106,7 +99,7 @@ namespace AlmacenWeb.Controllers
             }
             return View(producto);
         }
-        // --- [NUEVO MÉTODO PARA SCANNER DE STOCK] ---
+        
         // GET: /Productos/BuscarProductoPorCodigo?codigo=...
         [HttpGet]
         public async Task<IActionResult> BuscarProductoPorCodigo(string codigo)
@@ -121,7 +114,7 @@ namespace AlmacenWeb.Controllers
 
             if (producto != null)
             {
-                // --- PRODUCTO ENCONTRADO ---
+               
                 // Devolvemos la URL para EDITAR el producto existente
                 return Json(new
                 {
@@ -131,7 +124,7 @@ namespace AlmacenWeb.Controllers
             }
             else
             {
-                // --- PRODUCTO NUEVO ---
+                
                 // Devolvemos la URL para CREAR un nuevo producto,
                 // pasando el código como parámetro.
                 return Json(new

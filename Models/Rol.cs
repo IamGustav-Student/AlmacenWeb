@@ -17,7 +17,7 @@ namespace AlmacenWeb.Models
         [Display(Name = "Descripción")]
         public string RoDescripcion { get; set; }
 
-        // Propiedad de navegación: Un rol puede tener muchos usuarios
+        
         public virtual ICollection<Usuario> Usuarios { get; set; }
     }
 }

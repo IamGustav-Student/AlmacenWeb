@@ -11,6 +11,16 @@ var builder = WebApplication.CreateBuilder(args);
 // MVC
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddHttpContextAccessor();
+// Añadir servicios de Sesión
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // 30 minutos de inactividad
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 // DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -75,9 +85,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-// ¡IMPORTANTE! Añadir estos dos (y en este orden)
-app.UseAuthentication(); // 1ro: Quién eres (Autenticación)
-app.UseAuthorization();  // 2do: Qué puedes hacer (Autorización)
+app.UseSession(); // ¡Activar la Sesión! para el punto de venta!
+app.UseAuthentication(); // Quién eres (Autenticación)
+app.UseAuthorization();  // Qué puedes hacer (Autorización)
 
 app.MapControllerRoute(
     name: "default",

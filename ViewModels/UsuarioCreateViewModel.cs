@@ -2,7 +2,7 @@
 
 namespace AlmacenWeb.ViewModels
 {
-    // Similar a Registro, pero el Admin SÍ puede elegir Rol y Estado
+    
     public class UsuarioCreateViewModel
     {
         [Required(ErrorMessage = "El nombre es obligatorio")]

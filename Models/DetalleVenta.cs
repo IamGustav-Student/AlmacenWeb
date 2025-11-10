@@ -8,14 +8,14 @@ namespace AlmacenWeb.Models
         [Key]
         public int DeId { get; set; }
 
-        // Clave foránea para Venta
+        
         [Required]
         public int VeId { get; set; }
 
         [ForeignKey("VeId")]
         public virtual Venta Venta { get; set; }
 
-        // Clave foránea para Producto
+        
         [Required]
         public int PrId { get; set; }
 

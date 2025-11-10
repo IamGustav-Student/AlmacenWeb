@@ -37,7 +37,6 @@ namespace AlmacenWeb.Models
         [Display(Name = "Email")]
         public string ClEmail { get; set; }
 
-        // Propiedad de navegación: Un cliente puede tener muchas ventas
-         //public virtual ICollection<Venta> Ventas { get; set; }
+        
     }
 }

@@ -7,11 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AlmacenWeb.Data;
 using AlmacenWeb.Models;
-using Microsoft.AspNetCore.Authorization; // ¡Importante!
+using Microsoft.AspNetCore.Authorization;
 
 namespace AlmacenWeb.Controllers
 {
-    // ¡Protegido! Solo el Admin puede gestionar roles
+    
     [Authorize(Roles = "Admin")]
     public class RolesController : Controller
     {
@@ -145,8 +145,7 @@ namespace AlmacenWeb.Controllers
                 var usuarioConRol = await _context.Usuarios.AnyAsync(u => u.RoId == id);
                 if (usuarioConRol)
                 {
-                    // (El proyecto original no tenía esta lógica, pero es
-                    // fundamental para que no se rompa la BD)
+                    
                     TempData["Error"] = "No se puede borrar el rol porque está asignado a uno o más usuarios.";
                     return RedirectToAction(nameof(Index));
                 }

@@ -16,7 +16,7 @@ namespace AlmacenWeb.Models
 
         [StringLength(50)]
         [Display(Name = "Código de Barras")]
-        //ajustada para permitir solo dígitos y espacios para un código de barras estándar.
+        
         [RegularExpression(@"^[\d\s]*$", ErrorMessage = "El Código de Barras solo puede contener números y espacios.")]
         [Remote(action: "IsCodigoBarraAvailable", controller: "Productos", AdditionalFields = nameof(PrId), ErrorMessage = "Este código de barras ya está registrado.")]
         public string CodigoBarra { get; set; }

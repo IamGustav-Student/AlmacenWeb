@@ -26,7 +26,7 @@ namespace AlmacenWeb.Models
         public string UsEmail { get; set; }
 
         [Required(ErrorMessage = "La contraseña es obligatoria")]
-        [MaxLength(500)] // Almacenará el hash, no el texto plano
+        [MaxLength(500)] 
         [Display(Name = "Contraseña")]
         public string UsPassword { get; set; }
 

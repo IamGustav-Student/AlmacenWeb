@@ -253,6 +253,12 @@ namespace AlmacenWeb.Migrations
                     b.Property<int>("ClId")
                         .HasColumnType("int");
 
+                    b.Property<int>("MetodoPago")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Pagado")
+                        .HasColumnType("bit");
+
                     b.Property<int>("UsId")
                         .HasColumnType("int");
 

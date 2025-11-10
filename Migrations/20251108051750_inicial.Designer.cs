@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AlmacenWeb.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251102180511_clientearreglado")]
-    partial class clientearreglado
+    [Migration("20251108051750_inicial")]
+    partial class inicial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -129,6 +129,49 @@ namespace AlmacenWeb.Migrations
                     b.ToTable("Productos");
                 });
 
+            modelBuilder.Entity("AlmacenWeb.Models.Proveedor", b =>
+                {
+                    b.Property<int>("ProveedorId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProveedorId"));
+
+                    b.Property<string>("Cuit")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Direccion")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NombreContacto")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NombreEmpresa")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Telefono")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("ProveedorId");
+
+                    b.ToTable("Proveedor");
+                });
+
             modelBuilder.Entity("AlmacenWeb.Models.Rol", b =>
                 {
                     b.Property<int>("RoId")
@@ -212,6 +255,12 @@ namespace AlmacenWeb.Migrations
 
                     b.Property<int>("ClId")
                         .HasColumnType("int");
+
+                    b.Property<int>("MetodoPago")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Pagado")
+                        .HasColumnType("bit");
 
                     b.Property<int>("UsId")
                         .HasColumnType("int");

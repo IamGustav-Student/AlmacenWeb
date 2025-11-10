@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace AlmacenWeb.Migrations
 {
     /// <inheritdoc />
-    public partial class VentasYDetalles : Migration
+    public partial class inicial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -43,6 +43,24 @@ namespace AlmacenWeb.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Productos", x => x.PrId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Proveedor",
+                columns: table => new
+                {
+                    ProveedorId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NombreEmpresa = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    NombreContacto = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Cuit = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Direccion = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Telefono = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Proveedor", x => x.ProveedorId);
                 });
 
             migrationBuilder.CreateTable(
@@ -95,7 +113,9 @@ namespace AlmacenWeb.Migrations
                     VeFecha = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ClId = table.Column<int>(type: "int", nullable: false),
                     UsId = table.Column<int>(type: "int", nullable: false),
-                    VeTotal = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    VeTotal = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    MetodoPago = table.Column<int>(type: "int", nullable: false),
+                    Pagado = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -174,6 +194,9 @@ namespace AlmacenWeb.Migrations
         {
             migrationBuilder.DropTable(
                 name: "DetalleVenta");
+
+            migrationBuilder.DropTable(
+                name: "Proveedor");
 
             migrationBuilder.DropTable(
                 name: "Productos");

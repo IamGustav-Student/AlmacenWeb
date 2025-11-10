@@ -2,7 +2,7 @@
 
 namespace AlmacenWeb.ViewModels
 {
-    // Similar a Create, pero la contraseña es OPCIONAL
+    
     public class UsuarioEditViewModel
     {
         public int UsId { get; set; }
@@ -20,7 +20,7 @@ namespace AlmacenWeb.ViewModels
         [Display(Name = "Email")]
         public string UsEmail { get; set; }
 
-        // ¡OPCIONAL! Si se deja en blanco, no se cambia.
+        
         [StringLength(100, ErrorMessage = "La {0} debe tener al menos {2} caracteres.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "Nueva Contraseña (Opcional)")]

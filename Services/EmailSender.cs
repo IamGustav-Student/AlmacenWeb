@@ -36,7 +36,7 @@ namespace AlmacenWeb.Services
             };
             mailMessage.To.Add(email);
 
-            // Enviar el correo
+            
             await client.SendMailAsync(mailMessage);
         }
     }

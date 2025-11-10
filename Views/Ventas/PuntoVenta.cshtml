@@ -1,5 +1,7 @@
-﻿@{
-    ViewData["Title"] = "Punto de Venta";
+﻿@model AlmacenWeb.ViewModels.PosViewModel
+@using AlmacenWeb.Models
+@{
+    ViewData["Title"] = "Punto de Venta (Nuevo)";
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -7,390 +9,159 @@
         <i class="bi bi-cart-plus-fill text-success"></i>
         Punto de Venta
     </h1>
+    <form asp-action="CancelarVenta" method="post">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn btn-lg btn-outline-danger"
+                onclick="return confirm('¿Está seguro que desea vaciar el carrito?');">
+            <i class="bi bi-x-circle-fill me-2"></i>
+            Cancelar Venta
+        </button>
+    </form>
 </div>
 
+@if (!ViewContext.ModelState.IsValid)
+{
+    <div class="alert alert-danger" asp-validation-summary="All"></div>
+}
+
+
 <div class="row g-4">
-    <div class="col-lg-8">
+
+    <div class="col-lg-7">
+
         <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">1. Agregar Producto</h5>
+            </div>
             <div class="card-body">
-                <h5 class="card-title"><i class="bi bi-search me-2"></i>Buscar Producto</h5>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="bi bi-barcode-scan"></i></span>
-                    <input type="text" id="buscarProducto" class="form-control form-control-lg" placeholder="Escanear o escribir nombre del producto..." autofocus>
-                </div>
+                <form asp-action="AgregarAlCarrito" method="post" class="row g-3">
+                    @Html.AntiForgeryToken()
+
+                    <div class="col-md-7">
+                        <label asp-for="ProductoSeleccionadoId" class="form-label">Producto (con stock)</label>
+                        <select asp-for="ProductoSeleccionadoId" class="form-select" asp-items="Model.ProductosDisponibles">
+                            <option value="">-- Seleccionar un producto --</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label asp-for="Cantidad" class="form-label">Cantidad</label>
+                        <input asp-for="Cantidad" class="form-control" type="number" />
+                    </div>
+
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-plus-lg"></i>
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
 
         <div class="card shadow-sm">
-            <div class="card-header bg-light">
-                <h5 class="mb-0">Carrito</h5>
+            <div class="card-header">
+                <h5 class="mb-0">2. Carrito Actual</h5>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0" id="tablaCarrito">
+                    <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th scope="col">Producto</th>
-                                <th scope="col" style="width: 120px;">Cantidad</th>
-                                <th scope="col">Precio Unit.</th>
-                                <th scope="col">Subtotal</th>
-                                <th scope="col" style="width: 50px;"></th>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Precio Unit.</th>
+                                <th>Subtotal</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr id="filaVacia">
-                                <td colspan="5" class="text-center text-muted p-4">
-                                    <i class="bi bi-cart-x fs-1"></i>
-                                    <p class="mb-0">El carrito está vacío</p>
-                                </td>
-                            </tr>
+                            @foreach (var item in Model.Carrito)
+                            {
+                                <tr>
+                                    <td>@item.Nombre</td>
+                                    <td>@item.Cantidad</td>
+                                    <td>@item.Precio.ToString("C")</td>
+                                    <td>@item.Subtotal.ToString("C")</td>
+                                    <td>
+                                        <form asp-action="QuitarDelCarrito" method="post">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="productoId" value="@item.ProductoId" />
+                                            <button type="submit" class="btn btn-outline-danger btn-sm" title="Quitar">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                            @if (!Model.Carrito.Any())
+                            {
+                                <tr>
+                                    <td colspan="5" class_text-center text-muted p-4">
+                                        <i class="bi bi-cart-x fs-1"></i>
+                                        <p class="mb-0">El carrito está vacío</p>
+                                    </td>
+                                </tr>
+                            }
                         </tbody>
+                        <tfoot class="table-group-divider fw-bold">
+                            <tr>
+                                <td colspan="3" class="text-end fs-5">Total:</td>
+                                <td colspan="2" class="fs-5">@Model.TotalCarrito.ToString("C")</td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-lg-4">
+    <div class="col-lg-5">
         <div class="card shadow-sm sticky-top" style="top: 20px;">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Resumen de Venta</h5>
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">3. Finalizar Venta</h5>
             </div>
             <div class="card-body">
-                <div class="mb-3">
-                    <label for="buscarCliente" class="form-label fw-bold">Cliente</label>
-                    <input type="text" id="buscarCliente" class="form-control" placeholder="Buscar DNI o Nombre...">
-                    <div id="clienteSeleccionado" class="mt-2" data-cliente-id="">
+                <form asp-action="RegistrarVenta" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3">
+                        <label asp-for="ClienteSeleccionadoId" class="form-label fw-bold">Cliente</label>
+                        <select asp-for="ClienteSeleccionadoId" class="form-select" asp-items="Model.ClientesDisponibles">
+                            <option value="">-- Seleccionar un cliente --</option>
+                        </select>
+                        <span asp-validation-for="ClienteSeleccionadoId" class="text-danger"></span>
                     </div>
-                    <input type="hidden" id="clienteId" />
-                </div>
+                    <div class="mb-3">
+                        <label asp-for="MetodoPagoSeleccionado" class="form-label fw-bold"></label>
+                        <select asp-for="MetodoPagoSeleccionado" class="form-select" asp-items="Html.GetEnumSelectList<MetodoPago>()">
+                            <option value="">-- Seleccionar método de pago --</option>
+                        </select>
+                        <span asp-validation-for="MetodoPagoSeleccionado" class="text-danger"></span>
+                    </div>
 
-                <hr />
 
-                <div class="d-flex justify-content-between fs-5 mb-2">
-                    <span>Subtotal:</span>
-                    <span id="resumenSubtotal">$0.00</span>
-                </div>
-                <div class="d-flex justify-content-between fs-5 mb-3">
-                    <span>Descuentos:</span>
-                    <span id="resumenDescuentos" class="text-danger">-$0.00</span>
-                </div>
+                    <hr />
 
-                <div class="bg-light p-3 rounded d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="mb-0">TOTAL:</h4>
-                    <h4 class="mb-0 fw-bold text-primary" id="resumenTotal">$0.00</h4>
-                </div>
+                    <div class="bg-light p-3 rounded d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="mb-0">TOTAL A COBRAR:</h4>
+                        <h4 class="mb-0 fw-bold text-success">@Model.TotalCarrito.ToString("C")</h4>
+                    </div>
 
-                <div class="d-grid gap-2">
-                    <button class="btn btn-success btn-lg" id="btnRegistrarVenta" disabled>
-                        <i class="bi bi-check-circle-fill me-2"></i>
-                        Registrar Venta
-                    </button>
-                    <button class="btn btn-outline-danger" id="btnCancelarVenta">
-                        <i class="bi bi-x-lg me-2"></i>
-                        Cancelar
-                    </button>
-                </div>
-
-                <div id="alertaVenta" class="alert mt-3" role="alert" style="display: none;"></div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg"
+                                @(Model.Carrito.Any() ? "" : "disabled")>
+                            <i class="bi bi-check-circle-fill me-2"></i>
+                            Registrar Venta
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
-
 @section Scripts {
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
-    <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
-
-    <script>
-        // Este script maneja toda la lógica del POS
-        $(document).ready(function () {
-
-            let carrito = [];
-            let clienteId = null;
-
-            // 1. --- BÚSQUEDA DE CLIENTES ---
-            $("#buscarCliente").autocomplete({
-                source: function (request, response) {
-                    $.ajax({
-                        url: "@Url.Action("BuscarClientes", "Ventas")",
-                        dataType: "json",
-                        data: {
-                            term: request.term
-                        },
-                        success: function (data) {
-                            response(data);
-                        }
-                    });
-                },
-                minLength: 2,
-                select: function (event, ui) {
-                    // Al seleccionar un cliente
-                    clienteId = ui.item.id;
-                    $("#clienteSeleccionado").html(
-                        `<span class="badge bg-secondary p-2">${ui.item.label}</span>`
-                    );
-                    $("#buscarCliente").val(""); // Limpiar input
-                    validarEstadoBoton();
-                    return false; // Prevenir que el input se llene con el valor
-                }
-            });
-
-            // 2. --- BÚSQUEDA DE PRODUCTOS ---
-            $("#buscarProducto").autocomplete({
-                source: function (request, response) {
-                    $.ajax({
-                        url: "@Url.Action("BuscarProductos", "Ventas")",
-                        dataType: "json",
-                        data: {
-                            term: request.term
-                        },
-                        success: function (data) {
-                            response(data);
-                        }
-                    });
-                },
-                minLength: 2,
-                select: function (event, ui) {
-                    // Al seleccionar un producto
-                    agregarProductoAlCarrito(ui.item);
-                    $("#buscarProducto").val(""); // Limpiar input
-                    return false;
-                }
-            });
-
-            // 2. --- (FIN BÚSQUEDA DE PRODUCTOS - AUTOCOMPLETE) ---
-
-        // --- [NUEVO SCRIPT PARA SCANNER (TECLA ENTER)] ---
-        $("#buscarProducto").on("keydown", async function(e) {
-
-            // Si la tecla presionada no es "Enter" (código 13), no hacer nada.
-            if (e.key !== "Enter" && e.keyCode !== 13) {
-                return;
-            }
-
-            // 1. Prevenir que el "Enter" envíe el formulario (comportamiento por defecto)
-            e.preventDefault();
-
-            const codigo = $(this).val();
-            if (codigo.length < 3) { // Ignorar si es muy corto
-                return;
-            }
-
-            // 2. Limpiar el input inmediatamente
-            $(this).val("");
-            // (Opcional) Desenfocar el autocomplete si está abierto
-            $(this).autocomplete("close");
-
-            // 3. Llamar a nuestro NUEVO endpoint
-            try {
-                const response = await fetch(`@Url.Action("GetProductoPorCodigo", "Ventas")?codigo=${codigo}`);
-
-                if (response.ok) {
-                    const producto = await response.json();
-                    // 4. Éxito: Usamos la misma función que el autocomplete
-                    agregarProductoAlCarrito(producto);
-                } else {
-                    // 5. Fracaso: Producto no encontrado
-                    mostrarAlerta(false, "Producto no encontrado o sin stock.");
-                }
-            } catch (error) {
-                mostrarAlerta(false, "Error de conexión al buscar producto.");
-            }
-        });
-        // --- [FIN SCRIPT PARA SCANNER] ---
-
-
-            // 3. --- LÓGICA DEL CARRITO ---
-
-            function agregarProductoAlCarrito(producto) {
-                // Verificar si el producto ya está en el carrito
-                let productoExistente = carrito.find(item => item.prId === producto.id);
-
-                if (productoExistente) {
-                    // Si existe, solo aumentar la cantidad (si hay stock)
-                    if (productoExistente.cantidad < producto.stock) {
-                        productoExistente.cantidad++;
-                        productoExistente.subtotal = productoExistente.cantidad * productoExistente.precioUnitario;
-                    } else {
-                        mostrarAlerta(false, "Stock máximo alcanzado para este producto.");
-                    }
-                } else {
-                    // Si no existe, agregarlo
-                    carrito.push({
-                        prId: producto.id,
-                        nombre: producto.label.split(' (Stock:')[0],
-                        cantidad: 1,
-                        precioUnitario: producto.precio,
-                        subtotal: producto.precio,
-                        stockMax: producto.stock
-                    });
-                }
-
-                actualizarVistaCarrito();
-            }
-
-            function actualizarVistaCarrito() {
-                const tablaBody = $("#tablaCarrito tbody");
-                tablaBody.empty(); // Limpiar tabla
-
-                if (carrito.length === 0) {
-                    tablaBody.html(
-                        `<tr id="filaVacia">
-                            <td colspan="5" class="text-center text-muted p-4">
-                                <i class="bi bi-cart-x fs-1"></i>
-                                <p class="mb-0">El carrito está vacío</p>
-                            </td>
-                        </tr>`
-                    );
-                } else {
-                    let totalVenta = 0;
-                    carrito.forEach((item, index) => {
-                        totalVenta += item.subtotal;
-                        let fila = `
-                            <tr data-index="${index}">
-                                <td>${item.nombre}</td>
-                                <td>
-                                    <input type="number" class="form-control form-control-sm input-cantidad"
-                                           value="${item.cantidad}" min="1" max="${item.stockMax}">
-                                </td>
-                                <td>${formatearMoneda(item.precioUnitario)}</td>
-                                <td class="subtotal-col">${formatearMoneda(item.subtotal)}</td>
-                                <td>
-                                    <button class="btn btn-outline-danger btn-sm btn-eliminar">
-                                        <i class="bi bi-trash-fill"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        `;
-                        tablaBody.append(fila);
-                    });
-
-                    // Actualizar Resumen
-                    $("#resumenSubtotal").text(formatearMoneda(totalVenta));
-                    $("#resumenTotal").text(formatearMoneda(totalVenta));
-                }
-
-                validarEstadoBoton();
-            }
-
-            // Cambiar cantidad desde el input
-            $("#tablaCarrito").on("change", ".input-cantidad", function () {
-                let index = $(this).closest("tr").data("index");
-                let nuevaCantidad = parseInt($(this).val());
-
-                if (nuevaCantidad > carrito[index].stockMax) {
-                    nuevaCantidad = carrito[index].stockMax;
-                    $(this).val(nuevaCantidad);
-                    mostrarAlerta(false, "Stock máximo alcanzado.");
-                }
-
-                if (nuevaCantidad < 1) {
-                    nuevaCantidad = 1;
-                    $(this).val(1);
-                }
-
-                carrito[index].cantidad = nuevaCantidad;
-                carrito[index].subtotal = nuevaCantidad * carrito[index].precioUnitario;
-
-                actualizarVistaCarrito();
-            });
-
-            // Eliminar producto del carrito
-            $("#tablaCarrito").on("click", ".btn-eliminar", function () {
-                let index = $(this).closest("tr").data("index");
-                carrito.splice(index, 1); // Eliminar del array
-                actualizarVistaCarrito();
-            });
-
-            // 4. --- FINALIZACIÓN Y CANCELACIÓN ---
-
-            $("#btnCancelarVenta").on("click", function() {
-                carrito = [];
-                clienteId = null;
-                $("#clienteSeleccionado").empty().attr("data-cliente-id", "");
-                $("#buscarCliente").val("");
-                actualizarVistaCarrito();
-                mostrarAlerta(true, "Venta cancelada.", 3000);
-            });
-
-            $("#btnRegistrarVenta").on("click", async function() {
-
-                $(this).prop("disabled", true).html(
-                    `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Registrando...`
-                );
-
-                const ventaData = {
-                    clId: clienteId,
-                    total: parseFloat($("#resumenTotal").text().replace("$", "").replace(",", "")),
-                    detalles: carrito.map(item => ({
-                        prId: item.prId,
-                        cantidad: item.cantidad,
-                        precioUnitario: item.precioUnitario,
-                        subtotal: item.subtotal
-                    }))
-                };
-
-                try {
-                    const response = await fetch("@Url.Action("RegistrarVenta", "Ventas")", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            // El AntiForgeryToken es usualmente necesario,
-                            // pero lo omitimos por simplicidad (como en el original)
-                        },
-                        body: JSON.stringify(ventaData)
-                    });
-
-                    const result = await response.json();
-
-                    if (response.ok && result.success) {
-                        mostrarAlerta(true, "Venta registrada con éxito. Redirigiendo...");
-                        // Redirigir a los detalles de la venta
-                        setTimeout(() => {
-                            window.location.href = `/Ventas/Details/${result.ventaId}`;
-                        }, 2000);
-
-                    } else {
-                        mostrarAlerta(false, `Error: ${result.message}`);
-                        $(this).prop("disabled", false).html('<i class="bi bi-check-circle-fill me-2"></i> Registrar Venta');
-                    }
-                } catch (error) {
-                    mostrarAlerta(false, `Error de conexión: ${error.message}`);
-                    $(this).prop("disabled", false).html('<i class="bi bi-check-circle-fill me-2"></i> Registrar Venta');
-                }
-            });
-
-            // 5. --- FUNCIONES AUXILIARES ---
-
-            function validarEstadoBoton() {
-                // Habilita el botón solo si hay cliente Y productos
-                if (carrito.length > 0 && clienteId != null) {
-                    $("#btnRegistrarVenta").prop("disabled", false);
-                } else {
-                    $("#btnRegistrarVenta").prop("disabled", true);
-                }
-            }
-
-            function formatearMoneda(valor) {
-                return valor.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' });
-            }
-
-            let alertaTimeout;
-            function mostrarAlerta(esExito, mensaje, duracion = 5000) {
-                clearTimeout(alertaTimeout);
-                const alerta = $("#alertaVenta");
-
-                alerta.text(mensaje)
-                    .removeClass("alert-success alert-danger")
-                    .addClass(esExito ? "alert-success" : "alert-danger")
-                    .fadeIn();
-
-                alertaTimeout = setTimeout(() => {
-                    alerta.fadeOut();
-                }, duracion);
-            }
-        });
-    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

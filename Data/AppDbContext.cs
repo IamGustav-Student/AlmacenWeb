@@ -1,7 +1,7 @@
 ﻿using AlmacenWeb.Models;
-using AlmacenWeb.Services; // ¡Nuevo using!
+using AlmacenWeb.Services; 
 using Microsoft.EntityFrameworkCore;
-using System.Linq; // ¡Nuevo using!
+using System.Linq; 
 
 namespace AlmacenWeb.Data
 {
@@ -11,7 +11,7 @@ namespace AlmacenWeb.Data
         {
         }
 
-        // --- Agregamos los nuevos DbSet ---
+        
         public DbSet<Producto> Productos { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Rol> Roles { get; set; }
@@ -21,14 +21,13 @@ namespace AlmacenWeb.Data
         public DbSet<Proveedor> Proveedor { get; set; }
 
 
-        // Esta lógica crea los Roles
-        // y el usuario Admin si la base de datos está vacía.
+        
         public void DbInitialize(Encrypt encryptService)
         {
-            // Asegurarse que la base de datos fue creada
+            
             this.Database.EnsureCreated();
 
-            // 1. Inicializar Roles
+            
             if (!this.Roles.Any())
             {
                 var roles = new Rol[]
@@ -43,7 +42,7 @@ namespace AlmacenWeb.Data
                 this.SaveChanges();
             }
 
-            // 2. Inicializar Usuario Admin
+            
             if (!this.Usuarios.Any())
             {
                 var adminRol = this.Roles.FirstOrDefault(r => r.RoNombre == "Admin");
@@ -55,12 +54,25 @@ namespace AlmacenWeb.Data
                         UsNombre = "Administrador",
                         UsApellido = "del Sistema",
                         UsEmail = "admin@almacenweb.com",
-                        UsPassword = encryptService.HashPassword("admin123"), // ¡Contraseña hasheada!
+                        UsPassword = encryptService.HashPassword("admin123"),
                         UsActivo = true,
                         UsFechaRegistro = DateTime.Now,
                         RoId = adminRol.RoId,
                         date_created = DateTime.Now
                     };
+                    if (!this.Clientes.Any())
+                    {
+                        this.Clientes.Add(new Cliente
+                        {
+                            ClNombre = "Consumidor",
+                            ClApellido = "Final",
+                            ClDniCuit = "00000000",
+                            ClDireccion = "N/A",
+                            ClTelefono = "N/A",
+                            ClEmail = "cliente@generico.com"
+                        });
+                        this.SaveChanges();
+                    }
 
                     this.Usuarios.Add(adminUser);
                     this.SaveChanges();

@@ -10,7 +10,7 @@
     </h1>
     <span class="fs-5 text-muted">@DateTime.Now.ToString("dd 'de' MMMM, yyyy")</span>
 </div>
-<p class="fs-5 text-muted mb-4">Bienvenido al sistema de gestión de Almacen.</p>
+<p class="fs-5 text-muted mb-4">Bienvenido al PANEL DE ACCIONES.</p>
 
 <div class="row g-4 mb-4">
 
@@ -126,7 +126,7 @@
     @if (User.IsInRole("Admin") || User.IsInRole("Dueño"))
     {
         <div class="col-md-6 col-lg-4 d-flex">
-            <a asp-controller="Usuarios" asp-action="Index" class="text-decoration-none">
+            <a asp-controller="Usuarios" asp-action="Index" class="text-decoration-none w-100 h-100">
                 <div class="card dashboard-card shadow-sm h-100" style="border-left-color: var(--bs-danger);">
                     <div class="card-body d-flex align-items-center">
                         <i class="bi bi-people-fill display-4 text-danger me-4"></i>
@@ -157,7 +157,7 @@
     @if (User.IsInRole("Admin"))
     {
         <div class="col-md-6 col-lg-4 d-flex">
-            <a asp-controller="Roles" asp-action="Index" class="text-decoration-none">
+            <a asp-controller="Roles" asp-action="Index" class="text-decoration-none w-100 h-100">
                 <div class="card dashboard-card shadow-sm h-100" style="border-left-color: var(--bs-dark);">
                     <div class="card-body d-flex align-items-center">
                     <i class="bi bi-key-fill display-4 text-dark me-4"></i>

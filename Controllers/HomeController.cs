@@ -1,11 +1,11 @@
-using AlmacenWeb.Data; // <-- Añadir este using
+using AlmacenWeb.Data; 
 using AlmacenWeb.Models;
-using AlmacenWeb.ViewModels; // <-- Añadir este using
+using AlmacenWeb.ViewModels; 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore; // <-- Añadir este using
+using Microsoft.EntityFrameworkCore; 
 using System.Diagnostics;
-using System.Threading.Tasks; // <-- Añadir este using
+using System.Threading.Tasks; 
 
 namespace AlmacenWeb.Controllers
 {
@@ -13,30 +13,30 @@ namespace AlmacenWeb.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly AppDbContext _context; // <-- Inyectamos el DbContext
+        private readonly AppDbContext _context; 
 
-        // Actualizamos el constructor para recibir el AppDbContext
+        // recibir el AppDbContext
         public HomeController(ILogger<HomeController> logger, AppDbContext context)
         {
             _logger = logger;
-            _context = context; // <-- Asignamos el DbContext
+            _context = context; 
         }
 
-        // Convertimos el método Index en asíncrono
+        
         public async Task<IActionResult> Index()
         {
-            // Creamos el ViewModel
+            
             var vm = new DashboardViewModel();
 
             // --- Lógica para buscar datos reales ---
 
-            // 1. Productos (¡Este dato es real!)
+            //  Productos (¡Este dato es real!)
             vm.TotalProductos = await _context.Productos.CountAsync();
-            // 2. Stock Bajo (¡Este dato es real!)
+            //  Stock Bajo (¡Este dato es real!)
             // Definimos "Stock Bajo" como <= 10 unidades
             vm.ProductosStockBajo = await _context.Productos.CountAsync(p => p.CantidadDisponible <= 10);
 
-            // 3. Clientes y Ventas (Aún no tenemos los módulos, usamos los datos del archivo original)
+            //  Clientes y Ventas 
             vm.TotalClientes = await _context.Clientes.CountAsync();
             var hoy = DateTime.Today;
             vm.VentasHoy = await _context.Ventas
@@ -44,9 +44,9 @@ namespace AlmacenWeb.Controllers
 
             vm.TotalVentasHoy = await _context.Ventas
                                 .Where(v => v.VeFecha.Date == hoy)
-                                .SumAsync(v => (decimal?)v.VeTotal) ?? 0; // Usamos SumAsync y ?? 0 por si no hay ventas
+                                .SumAsync(v => (decimal?)v.VeTotal) ?? 0; 
 
-            // Enviamos el ViewModel a la vista
+            
             return View(vm);
         }
 
