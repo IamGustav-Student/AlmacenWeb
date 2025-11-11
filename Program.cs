@@ -16,7 +16,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30); // 30 minutos de inactividad
+    options.IdleTimeout = TimeSpan.FromMinutes(30); 
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
@@ -25,8 +25,7 @@ builder.Services.AddSession(options =>
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Servicio de Encriptación
-// Lo registramos como "Scoped" para que se cree una instancia por cada petición web
+
 builder.Services.AddScoped<Encrypt>();
 // Configurar los EmailSettings desde appsettings.json
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
@@ -54,7 +53,7 @@ builder.Services.AddAuthorization(options =>
 var app = builder.Build();
 
 // --- Inicilizador/Seeder de Base de Datos ---
-// Esto ejecuta el método DbInitialize que agregamos al AppDbContext
+
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -62,18 +61,18 @@ using (var scope = app.Services.CreateScope())
     {
         var context = services.GetRequiredService<AppDbContext>();
         var encryptService = services.GetRequiredService<Encrypt>();
-        // Llama al método para crear Roles y Admin
+        
         context.DbInitialize(encryptService);
     }
     catch (Exception ex)
     {
-        // Manejar errores si la base de datos falla al inicializar
+       
         var logger = services.GetRequiredService<ILogger<Program>>();
         logger.LogError(ex, "Ocurrió un error al inicializar la base de datos.");
     }
 }
 
-// --- Pipeline de Middlewares ---
+
 
 if (!app.Environment.IsDevelopment())
 {
@@ -85,9 +84,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-app.UseSession(); // ¡Activar la Sesión! para el punto de venta!
-app.UseAuthentication(); // Quién eres (Autenticación)
-app.UseAuthorization();  // Qué puedes hacer (Autorización)
+app.UseSession(); 
+app.UseAuthentication(); 
+app.UseAuthorization();  
 
 app.MapControllerRoute(
     name: "default",

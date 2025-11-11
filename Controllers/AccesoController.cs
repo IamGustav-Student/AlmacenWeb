@@ -36,7 +36,7 @@ namespace AlmacenWeb.Controllers
             {
                 return RedirectToAction("Index", "Home");
             }
-            return View("Login"); // Muestra la vista Login
+            return View("Login"); 
         }
 
         // POST: /Acceso/Index
@@ -45,9 +45,9 @@ namespace AlmacenWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Buscar al usuario por email
+                
                 var usuario = await _context.Usuarios
-                                    .Include(u => u.Rol) // Incluir el Rol
+                                    .Include(u => u.Rol) 
                                     .FirstOrDefaultAsync(u => u.UsEmail == model.Email);
 
                 if (usuario == null)
@@ -56,41 +56,41 @@ namespace AlmacenWeb.Controllers
                     return View("Login");
                 }
 
-                // Verificar la contraseña
+                
                 if (!usuario.UsActivo)
                 {
                     ViewData["Mensaje"] = "Tu cuenta está desactivada";
                     return View("Login");
                 }
 
-                // Usamos el servicio Encrypt para verificar
+                
                 if (!_encrypt.VerifyPassword(model.Password, usuario.UsPassword))
                 {
                     ViewData["Mensaje"] = "Contraseña incorrecta";
                     return View("Login");
                 }
 
-                // --- Si la validación es exitosa, creamos la sesión (Cookie) ---
+                
 
-                // 1. Crear 'Claims' (Datos del usuario para la sesión)
+                
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, usuario.UsNombre),
                     new Claim("Email", usuario.UsEmail),
-                    new Claim(ClaimTypes.Role, usuario.Rol.RoNombre), // ¡Guardamos el Rol!
+                    new Claim(ClaimTypes.Role, usuario.Rol.RoNombre), 
                 };
 
-                // 2. Crear identidad
+                
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                // 3. Propiedades de autenticación
+                
                 var authProperties = new AuthenticationProperties
                 {
                     AllowRefresh = true,
                     
                 };
 
-                // 4. Iniciar Sesión (crear la cookie)
+                // Iniciar Sesión (crear la cookie)
                 await HttpContext.SignInAsync(
                     CookieAuthenticationDefaults.AuthenticationScheme,
                     new ClaimsPrincipal(claimsIdentity),
@@ -118,14 +118,19 @@ namespace AlmacenWeb.Controllers
             
             if (ModelState.IsValid)
             {
-                // 1. Verificar si el email ya existe
+
                 if (await _context.Usuarios.AnyAsync(u => u.UsEmail == model.UsEmail))
                 {
                     ModelState.AddModelError("UsEmail", "El email ya está registrado.");
                     return View(model);
                 }
-
-                // 2. Buscar el rol "Usuario"
+                else if (await _context.Usuarios.AnyAsync(u => u.UsNombre == model.UsNombre && u.UsApellido == model.UsApellido))
+                {
+                    ModelState.AddModelError(string.Empty, " Ya existe un usuario con ese nombre y apellido.");
+                    return View (model);
+                }
+                
+                //  Buscar el rol "Usuario"
                 var rolUsuario = await _context.Roles.FirstOrDefaultAsync(r => r.RoNombre == "Usuario");
                 if (rolUsuario == null)
                 {
@@ -133,20 +138,21 @@ namespace AlmacenWeb.Controllers
                     ModelState.AddModelError(string.Empty, "Error interno: Rol de usuario no encontrado.");
                     return View(model);
                 }
+                
 
-                // 3. "Mapear" el ViewModel a la Entidad
-                var usuario = new Usuario
-                {
-                    UsNombre = model.UsNombre,
-                    UsApellido = model.UsApellido,
-                    UsEmail = model.UsEmail,
-                    // ¡Hashear la contraseña del ViewModel!
-                    UsPassword = _encrypt.HashPassword(model.Password),
-                    RoId = rolUsuario.RoId, // Asignar rol por defecto
-                    UsActivo = true,
-                    UsFechaRegistro = DateTime.Now,
-                    date_created = DateTime.Now
-                };
+                    //  "Mapear" el ViewModel a la Entidad
+                    var usuario = new Usuario
+                    {
+                        UsNombre = model.UsNombre,
+                        UsApellido = model.UsApellido,
+                        UsEmail = model.UsEmail,
+                        // ¡Hashear la contraseña del ViewModel!
+                        UsPassword = _encrypt.HashPassword(model.Password),
+                        RoId = rolUsuario.RoId, // Asignar rol por defecto
+                        UsActivo = true,
+                        UsFechaRegistro = DateTime.Now,
+                        date_created = DateTime.Now
+                    };
 
                 // 4. Guardar en la BD
                 _context.Add(usuario);
